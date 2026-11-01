@@ -49,10 +49,8 @@ export const MobileStickyBanner: React.FC<MobileStickyBannerProps> = ({
     >
       <div className="max-w-md mx-auto flex items-center justify-between gap-2.5 h-11">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-[#E50914] text-white flex items-center justify-center shrink-0 shadow-xs">
-            <svg viewBox="0 0 32 32" className="w-4 h-4 fill-current">
-              <path d="M10 8l14 8-14 8V8z" />
-            </svg>
+          <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shrink-0 shadow-xs overflow-hidden p-0.5">
+            <img src="/logo.png" alt="Anime Trix" className="w-full h-full object-contain" />
           </div>
           <div className="min-w-0">
             <p className="text-xs font-bold text-slate-900 truncate">Anime Trix Android App</p>

@@ -19,8 +19,7 @@ export default defineConfig(() => {
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
     preview: {
-      host: '0.0.0.0',
-      allowedHosts: ['anime-trix-5.onrender.com', '.onrender.com'],
+      allowedHosts: ['anime-trix-5.onrender.com'],
     },
   };
 });

@@ -40,11 +40,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           to="/"
           className="flex items-center gap-2.5 text-slate-900 font-bold tracking-tight text-lg md:text-xl whitespace-nowrap shrink-0 group"
         >
-          <div className="w-8 h-8 rounded-xl bg-[#E50914] text-white flex items-center justify-center shadow-xs group-hover:bg-[#C80811] transition-colors">
-            <svg viewBox="0 0 32 32" className="w-4 h-4 fill-current">
-              <path d="M10 8l14 8-14 8V8z" />
-            </svg>
-          </div>
+          <img
+            src="/logo.png"
+            alt="Anime Trix Logo"
+            className="w-9 h-9 object-contain rounded-lg group-hover:scale-105 transition-transform"
+          />
           <span className="font-extrabold tracking-tight">
             Anime <span className="text-[#E50914]">Trix</span>
           </span>

@@ -14,10 +14,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDownloadModal }) => {
           {/* Brand info */}
           <div className="space-y-1.5 max-w-md">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-[#E50914] text-white flex items-center justify-center">
-                <svg viewBox="0 0 32 32" className="w-3.5 h-3.5 fill-current">
-                  <path d="M10 8l14 8-14 8V8z" />
-                </svg>
+              <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center p-0.5 shadow-2xs overflow-hidden">
+                <img src="/logo.png" alt="Anime Trix" className="w-full h-full object-contain" />
               </div>
               <span className="font-bold text-slate-900 tracking-tight">Anime Trix Official</span>
             </div>

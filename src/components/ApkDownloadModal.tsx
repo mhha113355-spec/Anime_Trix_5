@@ -67,11 +67,8 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white shadow-md flex items-center justify-center shrink-0">
-              <svg viewBox="0 0 32 32" className="w-7 h-7">
-                <rect width="32" height="32" rx="6" fill="#E50914" />
-                <path d="M12 9l12 7-12 7V9z" fill="white" />
-              </svg>
+            <div className="w-12 h-12 rounded-2xl bg-white shadow-md flex items-center justify-center shrink-0 p-1.5 overflow-hidden">
+              <img src="/logo.png" alt="Anime Trix" className="w-full h-full object-contain" />
             </div>
             <div>
               <h2 id="modal-title" className="text-xl font-bold tracking-tight">
