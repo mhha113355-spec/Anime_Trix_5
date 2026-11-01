@@ -1,0 +1,6 @@
+{
+  "name": "Anime Trix - Official Web Catalog & App Launcher",
+  "description": "Official companion website, catalog preview, and smart deep-linking hub for the Anime Trix Android streaming app.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
