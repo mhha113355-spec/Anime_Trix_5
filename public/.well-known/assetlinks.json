@@ -1,11 +1,13 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.aistudio.animetrix.vxrpl",
       "sha256_cert_fingerprints": [
-        "FA:BF:CC:19:AC:AD:E5:05:FA:3F:EB:FB:B9:04:40:10:67:17:E2:47:D9:18:C4:93:0A:42:D1:1E:9A:AC:61:4B"
+        "FF:29:28:7D:06:E1:02:B5:05:80:D5:D1:85:62:BA:3B:E5:84:D2:9C:1E:F1:AF:60:17:8F:03:D1:BD:F4:E6:59"
       ]
     }
   }

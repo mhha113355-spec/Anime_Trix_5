@@ -3,37 +3,122 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
-const assetLinksJson = JSON.stringify(
-  [
+const HARDCODED_PACKAGE_NAME = 'com.aistudio.animetrix.vxrpl';
+const PRIMARY_SHA256 =
+  'FF:29:28:7D:06:E1:02:B5:05:80:D5:D1:85:62:BA:3B:E5:84:D2:9C:1E:F1:AF:60:17:8F:03:D1:BD:F4:E6:59';
+const FIRESTORE_ENDPOINT =
+  'https://firestore.googleapis.com/v1/projects/anime-trix-734fa/databases/(default)/documents/appConfig/appLinks';
+
+// In-memory cache for dynamic Firestore assetlinks
+let cachedAssetLinksJson: string = '';
+let lastFetchTime = 0;
+const CACHE_TTL_MS = 60 * 1000; // 60 seconds TTL
+
+async function getMergedAssetLinks(): Promise<string> {
+  const now = Date.now();
+  if (cachedAssetLinksJson && now - lastFetchTime < CACHE_TTL_MS) {
+    return cachedAssetLinksJson;
+  }
+
+  const fingerprints = new Set<string>();
+  fingerprints.add(PRIMARY_SHA256);
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2500);
+
+    const response = await fetch(FIRESTORE_ENDPOINT, {
+      signal: controller.signal,
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    clearTimeout(timeout);
+
+    if (response.ok) {
+      const data: any = await response.json();
+      const fields = data?.fields || {};
+
+      // 1. Merge primarySha256 if present
+      if (fields?.primarySha256?.stringValue) {
+        const val = fields.primarySha256.stringValue.trim();
+        if (val) fingerprints.add(val);
+      }
+
+      // 2. Merge sha256Fingerprints array values
+      const arrayValues = fields?.sha256Fingerprints?.arrayValue?.values;
+      if (Array.isArray(arrayValues)) {
+        for (const item of arrayValues) {
+          if (item?.stringValue) {
+            const val = item.stringValue.trim();
+            if (val) fingerprints.add(val);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Could not fetch appLinks from Firestore REST, using fallback fingerprints:', err);
+  }
+
+  const assetLinks = [
     {
       relation: ['delegate_permission/common.handle_all_urls'],
       target: {
         namespace: 'android_app',
-        package_name: 'com.aistudio.animetrix.vxrpl',
-        sha256_cert_fingerprints: [
-          'FA:BF:CC:19:AC:AD:E5:05:FA:3F:EB:FB:B9:04:40:10:67:17:E2:47:D9:18:C4:93:0A:42:D1:1E:9A:AC:61:4B',
-        ],
+        package_name: HARDCODED_PACKAGE_NAME,
+        sha256_cert_fingerprints: Array.from(fingerprints),
       },
     },
-  ],
-  null,
-  2
-);
+  ];
 
-function assetLinksPlugin() {
-  const handler = (req: any, res: any, next: any) => {
-    if (req.url && (req.url === '/.well-known/assetlinks.json' || req.url.startsWith('/.well-known/assetlinks.json?'))) {
-      res.setHeader('Content-Type', 'application/json');
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.statusCode = 200;
-      res.end(assetLinksJson);
-      return;
+  cachedAssetLinksJson = JSON.stringify(assetLinks, null, 2);
+  lastFetchTime = now;
+  return cachedAssetLinksJson;
+}
+
+function dynamicAssetLinksPlugin() {
+  const handler = async (req: any, res: any, next: any) => {
+    const pathname = (req.url || '').split('?')[0];
+    if (
+      pathname === '/.well-known/assetlinks.json' ||
+      pathname === '/.well-known/assetlinks.json/'
+    ) {
+      try {
+        const jsonOutput = await getMergedAssetLinks();
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'public, max-age=60');
+        res.statusCode = 200;
+        res.end(jsonOutput);
+        return;
+      } catch (e) {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.statusCode = 200;
+        res.end(
+          JSON.stringify(
+            [
+              {
+                relation: ['delegate_permission/common.handle_all_urls'],
+                target: {
+                  namespace: 'android_app',
+                  package_name: HARDCODED_PACKAGE_NAME,
+                  sha256_cert_fingerprints: [PRIMARY_SHA256],
+                },
+              },
+            ],
+            null,
+            2
+          )
+        );
+        return;
+      }
     }
     next();
   };
 
   return {
-    name: 'asset-links-plugin',
+    name: 'dynamic-asset-links-plugin',
     configureServer(server: any) {
       server.middlewares.use(handler);
     },
@@ -45,7 +130,7 @@ function assetLinksPlugin() {
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), assetLinksPlugin()],
+    plugins: [react(), tailwindcss(), dynamicAssetLinksPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
