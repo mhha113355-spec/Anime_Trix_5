@@ -88,13 +88,11 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
   const handleShare = async () => {
     if (!anime) return;
     const url = window.location.href;
-    const title = `${anime.title} - Anime Trix`;
-    const text = `Check out ${anime.title} on Anime Trix for Android!`;
 
     if (navigator.share) {
       try {
-        await navigator.share({ title, text, url });
-        showToast('Link shared successfully!');
+        await navigator.share({ url });
+        showToast('Clean link shared successfully!');
         return;
       } catch (e) {
         // Fallback to copy
@@ -103,7 +101,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
 
     try {
       await navigator.clipboard.writeText(url);
-      showToast('Anime link copied to clipboard!');
+      showToast('Clean link copied to clipboard!');
     } catch (e) {
       showToast('Could not copy link', 'error');
     }

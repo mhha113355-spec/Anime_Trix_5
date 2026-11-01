@@ -41,17 +41,13 @@ export const LockedVideoPlayer: React.FC<LockedVideoPlayerProps> = ({
 
   const handleShare = async () => {
     const url = window.location.href;
-    const shareTitle = `${episode.title} - ${parentAnime?.title || 'Anime Trix'}`;
-    const shareText = `Watch ${episode.title} in the Anime Trix Android App!`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: shareTitle,
-          text: shareText,
           url: url,
         });
-        showToast('Link shared successfully!');
+        showToast('Link copied / shared successfully!');
         return;
       } catch (err) {
         // User cancelled or share failed, fallback to copy
@@ -60,7 +56,7 @@ export const LockedVideoPlayer: React.FC<LockedVideoPlayerProps> = ({
 
     try {
       await navigator.clipboard.writeText(url);
-      showToast('Link copied to clipboard!');
+      showToast('Clean link copied to clipboard!');
     } catch (err) {
       showToast('Could not copy link', 'error');
     }
