@@ -10,83 +10,81 @@ interface AnimeCardProps {
 export const AnimeCard: React.FC<AnimeCardProps> = ({ anime }) => {
   const [imageError, setImageError] = useState(false);
 
-  // Fallback image generated specifically for Anime Trix fallback
   const fallbackImage = '/src/assets/images/hero_anime_showcase_1793556529783.jpg';
   const displayImage = !imageError && anime.posterUrl ? anime.posterUrl : (anime.backdropUrl || fallbackImage);
 
-  // Format rating
   const ratingDisplay = anime.rating ? String(anime.rating) : null;
   const isMovie = anime.contentType?.toLowerCase().includes('movie');
 
   return (
     <Link
       to={`/anime/${anime.id}`}
-      className="group flex flex-col bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-slate-300 hover:shadow-md transition-all duration-200"
+      className="group flex flex-col p-2 bg-white rounded-[22px] border border-slate-200 shadow-2xs hover:shadow-md hover:border-slate-300 active:scale-[0.97] transition-all duration-300"
     >
       {/* Poster Image Container */}
-      <div className="relative aspect-[3/4] w-full bg-slate-100 overflow-hidden">
+      <div className="relative aspect-[3/4] w-full bg-slate-100 rounded-[18px] overflow-hidden">
         <img
           src={displayImage}
           alt={anime.title}
           onError={() => setImageError(true)}
           referrerPolicy="no-referrer"
           loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
         />
 
-        {/* Content Type Indicator (Movie vs TV) */}
-        <div className="absolute top-2.5 left-2.5 px-2 py-0.5 bg-black/75 backdrop-blur-xs text-white text-[11px] font-semibold rounded-md flex items-center gap-1">
-          {isMovie ? <Film className="w-3 h-3 text-red-400" /> : <Tv className="w-3 h-3 text-red-400" />}
+        {/* Content Type Indicator */}
+        <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-semibold rounded-lg border border-white/15 flex items-center gap-1">
+          {isMovie ? <Film className="w-2.5 h-2.5 text-red-400" /> : <Tv className="w-2.5 h-2.5 text-red-400" />}
           <span>{isMovie ? 'Movie' : 'TV Series'}</span>
         </div>
 
         {/* Rating if present */}
         {ratingDisplay && (
-          <div className="absolute top-2.5 right-2.5 px-2 py-0.5 bg-black/75 backdrop-blur-xs text-amber-300 text-[11px] font-semibold rounded-md flex items-center gap-1">
-            <Star className="w-3 h-3 fill-amber-300" />
-            <span className="font-mono tabular-nums">{ratingDisplay}</span>
+          <div className="absolute top-2 right-2 px-2 py-0.5 bg-black/60 backdrop-blur-md text-amber-300 text-[10px] font-bold rounded-lg border border-white/15 flex items-center gap-1 font-mono">
+            <Star className="w-2.5 h-2.5 fill-amber-300" />
+            <span>{ratingDisplay}</span>
           </div>
         )}
 
-        {/* Subtle Play Overlay on Hover */}
-        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <div className="w-11 h-11 rounded-full bg-[#E50914] text-white flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
-            <Play className="w-5 h-5 fill-current ml-0.5" />
+        {/* Play Overlay on Hover */}
+        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-[#E50914] text-white flex items-center justify-center shadow-lg shadow-red-600/40 transform scale-75 group-hover:scale-100 transition-transform duration-300">
+            <Play className="w-4 h-4 fill-current ml-0.5" />
           </div>
         </div>
       </div>
 
       {/* Card Info */}
-      <div className="p-3.5 flex flex-col flex-1 justify-between gap-2">
+      <div className="p-2 pt-2.5 flex flex-col flex-1 justify-between gap-1.5">
         <div>
-          {/* Unboxed Metadata with · separator */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
+          {/* Metadata row */}
+          <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mb-0.5">
             {anime.releaseYear && <span>{anime.releaseYear}</span>}
             {anime.releaseYear && anime.genres && anime.genres.length > 0 && <span aria-hidden="true">·</span>}
             {anime.genres && anime.genres.length > 0 && (
-              <span className="truncate max-w-[120px]">{anime.genres[0]}</span>
+              <span className="truncate max-w-[100px] text-slate-600 font-medium">{anime.genres[0]}</span>
             )}
           </div>
 
           {/* Title */}
-          <h3 className="font-semibold text-slate-900 text-sm leading-snug line-clamp-2 group-hover:text-[#E50914] transition-colors">
+          <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug line-clamp-1 group-hover:text-[#E50914] transition-colors">
             {anime.title}
           </h3>
         </div>
 
-        {/* Admin Dub Badges strictly from availableDubs array */}
+        {/* Audio Dub Badges */}
         {anime.availableDubs && anime.availableDubs.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-100">
+          <div className="flex flex-wrap items-center gap-1 pt-1 border-t border-slate-100">
             {anime.availableDubs.slice(0, 2).map((dub, idx) => (
               <span
                 key={idx}
-                className="text-[10px] font-medium text-slate-600 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-md"
+                className="text-[9px] font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md"
               >
                 {dub}
               </span>
             ))}
             {anime.availableDubs.length > 2 && (
-              <span className="text-[10px] text-slate-400">
+              <span className="text-[9px] text-slate-400">
                 +{anime.availableDubs.length - 2}
               </span>
             )}

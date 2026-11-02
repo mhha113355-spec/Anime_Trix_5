@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Star, Smartphone, Info, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, Smartphone, Info } from 'lucide-react';
 import { Banner, Anime } from '../types';
 import { openInAnimeTrixApp } from '../lib/deepLink';
 
@@ -29,7 +29,6 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Construct slides from Firestore banners or top anime
   const slides: SlideItem[] = React.useMemo(() => {
     if (banners && banners.length > 0) {
       return banners.map((b) => {
@@ -37,7 +36,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
         return {
           id: b.id,
           title: b.title || matchingAnime?.title || 'Featured Anime',
-          description: b.description || matchingAnime?.description || 'Watch full episodes in the Anime Trix Android App.',
+          description: b.description || matchingAnime?.description || 'Watch full episodes in 1080p HD with Bangla & Hindi dub in the official Anime Trix app.',
           imageUrl:
             b.imageUrl ||
             b.bannerUrl ||
@@ -47,9 +46,9 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
             '/src/assets/images/hero_anime_showcase_1793556529783.jpg',
           animeId: b.animeId || matchingAnime?.id,
           episodeId: b.episodeId,
-          rating: matchingAnime?.rating,
-          genres: matchingAnime?.genres,
-          dubs: matchingAnime?.availableDubs,
+          rating: matchingAnime?.rating || '4.9',
+          genres: matchingAnime?.genres || ['Action', 'Adventure'],
+          dubs: matchingAnime?.availableDubs || ['Bengali Dub'],
         };
       });
     }
@@ -58,12 +57,12 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
       return fallbackAnimeList.slice(0, 5).map((a) => ({
         id: a.id,
         title: a.title,
-        description: a.description,
+        description: a.description || 'Watch full episodes in 1080p HD with Bangla & Hindi dub in the official Anime Trix app.',
         imageUrl: a.backdropUrl || a.posterUrl || '/src/assets/images/hero_anime_showcase_1793556529783.jpg',
         animeId: a.id,
-        rating: a.rating,
-        genres: a.genres,
-        dubs: a.availableDubs,
+        rating: a.rating || '4.9',
+        genres: a.genres || ['Action', 'Adventure'],
+        dubs: a.availableDubs || ['Bengali Dub'],
       }));
     }
 
@@ -73,11 +72,13 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
         title: 'Anime Trix Official Streaming',
         description: 'Watch your favorite anime in Bangla, Hindi & English Dub on Android.',
         imageUrl: '/src/assets/images/hero_anime_showcase_1793556529783.jpg',
+        rating: '4.9',
+        genres: ['Action', 'Adventure'],
+        dubs: ['Bengali Dub'],
       },
     ];
   }, [banners, fallbackAnimeList]);
 
-  // Autoplay slider every 5s
   useEffect(() => {
     if (slides.length <= 1) return;
     const interval = setInterval(() => {
@@ -110,8 +111,8 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
   };
 
   return (
-    <div className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden bg-slate-950 border border-slate-200/80 shadow-md group">
-      {/* 16:9 on mobile, 21:9 on desktop */}
+    <div className="relative w-full rounded-[28px] sm:rounded-[36px] overflow-hidden bg-slate-900 border border-slate-200 shadow-sm group">
+      {/* 16:10 on mobile, 21:9 on desktop */}
       <div className="relative aspect-[16/10] sm:aspect-[21/9] w-full overflow-hidden">
         {/* Background Banner Image */}
         <img
@@ -121,41 +122,41 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
           className="w-full h-full object-cover object-center transition-all duration-700 ease-out"
         />
 
-        {/* Ambient Dark Gradient Scrim (Optimized for mobile readability) */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent hidden sm:block" />
+        {/* Clean Scrim Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent hidden sm:block" />
 
-        {/* Content Container (Compact, Sleek, Professional) */}
+        {/* Content Container */}
         <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-7 md:p-9 text-white z-10">
-          {/* Metadata badges row */}
+          {/* Metadata Badges (Clean White UI Style) */}
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 text-[11px] sm:text-xs">
             {currentSlide.rating && (
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/90 text-white font-bold font-mono">
-                <Star className="w-3 h-3 fill-white" />
+              <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-amber-300 font-bold font-mono border border-white/15">
+                <Star className="w-3 h-3 fill-amber-300" />
                 <span>{currentSlide.rating}</span>
               </span>
             )}
 
             {currentSlide.dubs && currentSlide.dubs.length > 0 && (
-              <span className="px-2 py-0.5 rounded-md bg-[#E50914] text-white font-bold">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#E50914] text-white font-bold shadow-xs">
                 {currentSlide.dubs[0]}
               </span>
             )}
 
             {currentSlide.genres && currentSlide.genres.length > 0 && (
-              <span className="hidden xs:inline-block px-2 py-0.5 rounded-md bg-white/20 backdrop-blur-xs text-slate-100 font-medium">
+              <span className="hidden xs:inline-block px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-white font-medium border border-white/15">
                 {currentSlide.genres.slice(0, 2).join(', ')}
               </span>
             )}
           </div>
 
           {/* Title */}
-          <h2 className="text-lg sm:text-2xl md:text-3xl font-black tracking-tight text-white line-clamp-1 mb-1">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-black tracking-tight text-white line-clamp-1 mb-1 drop-shadow-md">
             {currentSlide.title}
           </h2>
 
-          {/* Subtitle / Description (1 line on mobile) */}
-          <p className="text-xs text-slate-300 line-clamp-1 sm:line-clamp-2 max-w-xl mb-3 sm:mb-4">
+          {/* Subtitle / Description */}
+          <p className="text-xs sm:text-sm text-slate-200 line-clamp-1 sm:line-clamp-2 max-w-xl mb-3 sm:mb-5 leading-relaxed">
             {currentSlide.description}
           </p>
 
@@ -163,44 +164,44 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={handleLaunchApp}
-              className="min-h-[38px] sm:min-h-[44px] px-4 sm:px-6 py-2 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-red-600/30 active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+              className="min-h-[40px] sm:min-h-[46px] px-6 sm:px-8 py-2 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs sm:text-sm rounded-full shadow-lg shadow-red-500/30 active:scale-95 transition-all flex items-center gap-2 shrink-0"
             >
-              <Smartphone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span>Watch in App / অ্যাপে দেখুন</span>
+              <Smartphone className="w-4 h-4" />
+              <span>Open App</span>
             </button>
 
             {currentSlide.animeId && (
               <Link
                 to={`/anime/${currentSlide.animeId}`}
-                className="min-h-[38px] sm:min-h-[44px] px-3.5 sm:px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold text-xs sm:text-sm rounded-xl transition-colors flex items-center gap-1 shrink-0"
+                className="min-h-[40px] sm:min-h-[46px] px-5 sm:px-6 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white font-semibold text-xs sm:text-sm rounded-full transition-all flex items-center gap-1.5 shrink-0 active:scale-95"
               >
-                <Info className="w-3.5 h-3.5" />
+                <Info className="w-4 h-4 text-white" />
                 <span>Details</span>
               </Link>
             )}
           </div>
         </div>
 
-        {/* Previous / Next Arrows (visible on hover or desktop) */}
+        {/* Slider Controls */}
         {slides.length > 1 && (
           <>
             <button
               onClick={handlePrev}
               aria-label="Previous slide"
-              className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white items-center justify-center transition-colors z-20"
+              className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white items-center justify-center transition-all z-20 active:scale-90"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={handleNext}
               aria-label="Next slide"
-              className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white items-center justify-center transition-colors z-20"
+              className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white items-center justify-center transition-all z-20 active:scale-90"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
 
-            {/* Dots Indicator */}
-            <div className="absolute bottom-2.5 right-4 sm:right-6 flex items-center gap-1.5 z-20">
+            {/* Pill Indicators */}
+            <div className="absolute bottom-3 right-4 sm:right-6 flex items-center gap-1.5 z-20">
               {slides.map((_, idx) => (
                 <button
                   key={idx}
@@ -209,8 +210,8 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
                     setCurrentIndex(idx);
                   }}
                   aria-label={`Go to slide ${idx + 1}`}
-                  className={`h-1.5 rounded-full transition-all ${
-                    currentIndex === idx ? 'w-5 bg-[#E50914]' : 'w-1.5 bg-white/40'
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    currentIndex === idx ? 'w-6 bg-[#E50914]' : 'w-1.5 bg-white/40'
                   }`}
                 />
               ))}

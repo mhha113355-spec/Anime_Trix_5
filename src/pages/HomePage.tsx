@@ -39,12 +39,10 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Selected filter states
   const [selectedType, setSelectedType] = useState<'all' | 'TV Series' | 'Movie'>('all');
   const [selectedGenre, setSelectedGenre] = useState<string>('all');
   const [selectedDub, setSelectedDub] = useState<string>('all');
 
-  // Handle query param redirects
   useEffect(() => {
     const epParam = searchParams.get('ep');
     const animeParam = searchParams.get('anime');
@@ -66,7 +64,6 @@ export const HomePage: React.FC<HomePageProps> = ({
     }
   }, [searchParams, navigate, onOpenDownloadModal]);
 
-  // Aggregate genres from anime list
   const allGenres = useMemo(() => {
     const set = new Set<string>();
     animeList.forEach((a) => {
@@ -77,7 +74,6 @@ export const HomePage: React.FC<HomePageProps> = ({
     return Array.from(set).slice(0, 12);
   }, [animeList]);
 
-  // Aggregate dubs from anime list
   const allDubs = useMemo(() => {
     const set = new Set<string>();
     animeList.forEach((a) => {
@@ -88,7 +84,6 @@ export const HomePage: React.FC<HomePageProps> = ({
     return Array.from(set);
   }, [animeList]);
 
-  // Filter anime list based on search and filters
   const filteredAnime = useMemo(() => {
     return animeList.filter((anime) => {
       if (searchQuery.trim()) {
@@ -120,19 +115,16 @@ export const HomePage: React.FC<HomePageProps> = ({
     });
   }, [animeList, searchQuery, selectedType, selectedGenre, selectedDub]);
 
-  // Trending anime
   const trendingAnime = useMemo(() => {
     return animeList
       .filter((a) => a.trending || (typeof a.rating === 'number' && a.rating >= 8) || (typeof a.rating === 'string' && parseFloat(a.rating) >= 4.0))
       .slice(0, 8);
   }, [animeList]);
 
-  // Movies
   const movieAnime = useMemo(() => {
     return animeList.filter((a) => a.contentType?.toLowerCase().includes('movie')).slice(0, 8);
   }, [animeList]);
 
-  // Series
   const tvSeriesAnime = useMemo(() => {
     return animeList.filter((a) => !a.contentType?.toLowerCase().includes('movie')).slice(0, 8);
   }, [animeList]);
@@ -140,14 +132,14 @@ export const HomePage: React.FC<HomePageProps> = ({
   const appMockupImage = '/src/assets/images/app_mockup_preview_1793556528972.jpg';
 
   return (
-    <div className="space-y-8 md:space-y-10">
-      {/* System Notice if present in appConfig/settings */}
+    <div className="space-y-8 md:space-y-12">
+      {/* Notice Card if present */}
       {appSettings.systemNotice?.enabled && appSettings.systemNotice.message && (
-        <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex items-start gap-2.5">
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex items-start gap-2.5">
           <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <div>
             {appSettings.systemNotice.title && (
-              <p className="font-semibold">{appSettings.systemNotice.title}</p>
+              <p className="font-semibold text-amber-900">{appSettings.systemNotice.title}</p>
             )}
             <p className="text-amber-800 text-xs mt-0.5 leading-relaxed">
               {appSettings.systemNotice.message}
@@ -156,7 +148,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       )}
 
-      {/* Featured Hero Banner Carousel */}
+      {/* Hero Banner Carousel */}
       {!searchQuery && (
         <HeroSlider
           banners={banners}
@@ -165,14 +157,14 @@ export const HomePage: React.FC<HomePageProps> = ({
         />
       )}
 
-      {/* Filter and Categorization Bar */}
+      {/* Clean White UI Filter Controls */}
       <section aria-label="Catalog filters" className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-100 pb-2.5">
-          {/* Content Type Tabs */}
-          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl shrink-0 self-start">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+          {/* Content Type Segmented Capsule */}
+          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-full border border-slate-200 shrink-0 self-start">
             <button
               onClick={() => setSelectedType('all')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+              className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all active:scale-95 ${
                 selectedType === 'all'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -182,7 +174,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
             <button
               onClick={() => setSelectedType('TV Series')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+              className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all flex items-center gap-1 active:scale-95 ${
                 selectedType === 'TV Series'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -193,7 +185,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
             <button
               onClick={() => setSelectedType('Movie')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+              className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all flex items-center gap-1 active:scale-95 ${
                 selectedType === 'Movie'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -204,16 +196,16 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
           </div>
 
-          {/* Dub selector chip row */}
+          {/* Dub selector chips */}
           {allDubs.length > 0 && (
             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-              <span className="text-[11px] font-medium text-slate-400 whitespace-nowrap mr-0.5">Dub:</span>
+              <span className="text-[11px] font-medium text-slate-400 whitespace-nowrap mr-0.5">Audio:</span>
               <button
                 onClick={() => setSelectedDub('all')}
-                className={`px-2.5 py-1 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
+                className={`px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-all active:scale-95 ${
                   selectedDub === 'all'
-                    ? 'bg-slate-900 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-slate-900 text-white font-bold'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
                 }`}
               >
                 All Audio
@@ -222,10 +214,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <button
                   key={dub}
                   onClick={() => setSelectedDub(dub)}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
+                  className={`px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-all active:scale-95 ${
                     selectedDub === dub
-                      ? 'bg-[#E50914] text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-[#E50914] text-white font-bold shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
                   }`}
                 >
                   {dub}
@@ -235,14 +227,14 @@ export const HomePage: React.FC<HomePageProps> = ({
           )}
         </div>
 
-        {/* Dynamic Genre Chips */}
+        {/* Dynamic Genre Pills */}
         {allGenres.length > 0 && (
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
             <button
               onClick={() => setSelectedGenre('all')}
-              className={`px-3 py-1 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
+              className={`px-3.5 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-all active:scale-95 ${
                 selectedGenre === 'all'
-                  ? 'bg-slate-900 text-white'
+                  ? 'bg-slate-900 text-white font-bold'
                   : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300'
               }`}
             >
@@ -252,9 +244,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               <button
                 key={genre}
                 onClick={() => setSelectedGenre(genre)}
-                className={`px-3 py-1 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
+                className={`px-3.5 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-all active:scale-95 ${
                   selectedGenre === genre
-                    ? 'bg-slate-900 text-white'
+                    ? 'bg-slate-900 text-white font-bold'
                     : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300'
                 }`}
               >
@@ -265,17 +257,16 @@ export const HomePage: React.FC<HomePageProps> = ({
         )}
       </section>
 
-      {/* Main Content Grid Area */}
+      {/* Main Catalog Grids */}
       {loading ? (
-        <div className="py-20 flex flex-col items-center justify-center text-center space-y-3">
+        <div className="py-24 flex flex-col items-center justify-center text-center space-y-3">
           <Loader2 className="w-8 h-8 text-[#E50914] animate-spin" />
-          <p className="text-sm font-medium text-slate-600">Connecting to Anime Trix...</p>
+          <p className="text-sm font-medium text-slate-600">Loading Anime Trix library...</p>
         </div>
       ) : searchQuery || selectedGenre !== 'all' || selectedDub !== 'all' || selectedType !== 'all' ? (
-        /* Filtered / Search Results Section */
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base sm:text-lg font-bold text-slate-900">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
               {searchQuery ? `Search Results for "${searchQuery}"` : 'Filtered Anime'}
             </h2>
             <span className="text-xs text-slate-500 font-mono tabular-nums">
@@ -290,7 +281,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               ))}
             </div>
           ) : (
-            <div className="py-16 text-center bg-slate-50 border border-slate-200 rounded-3xl p-6">
+            <div className="py-16 text-center bg-white border border-slate-200 rounded-[28px] p-6 shadow-xs">
               <Search className="w-8 h-8 text-slate-400 mx-auto mb-2" />
               <h3 className="text-base font-semibold text-slate-800">No matching anime found</h3>
               <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
@@ -303,7 +294,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   setSelectedDub('all');
                   setSelectedType('all');
                 }}
-                className="mt-4 px-4 py-2 bg-slate-900 text-white text-xs font-semibold rounded-xl"
+                className="mt-4 px-5 py-2 bg-slate-900 text-white text-xs font-bold rounded-full active:scale-95 transition-all"
               >
                 Reset All Filters
               </button>
@@ -311,24 +302,22 @@ export const HomePage: React.FC<HomePageProps> = ({
           )}
         </section>
       ) : (
-        /* Default Homepage Layout (Anime cards ONLY — No big episodes on homepage) */
-        <div className="space-y-10">
-          {/* Trending Series Section */}
+        <div className="space-y-10 sm:space-y-12">
+          {/* Trending in Anime Trix */}
           {trendingAnime.length > 0 && (
-            <section className="space-y-3">
+            <section className="space-y-3.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-1 bg-red-100 text-[#E50914] rounded-lg">
+                  <div className="w-7 h-7 rounded-lg bg-red-100 text-[#E50914] flex items-center justify-center">
                     <Flame className="w-4 h-4" />
                   </div>
                   <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                     Trending in Anime Trix
                   </h2>
                 </div>
-                <span className="text-xs text-slate-400">Popular</span>
+                <span className="text-xs text-slate-400">Top Popular</span>
               </div>
 
-              {/* Clean 2-column on mobile, 4-column on tablet/desktop */}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-5">
                 {trendingAnime.slice(0, 4).map((anime) => (
                   <AnimeCard key={anime.id} anime={anime} />
@@ -339,10 +328,10 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           {/* Popular TV Series */}
           {tvSeriesAnime.length > 0 && (
-            <section className="space-y-3">
+            <section className="space-y-3.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-1 bg-red-100 text-[#E50914] rounded-lg">
+                  <div className="w-7 h-7 rounded-lg bg-red-100 text-[#E50914] flex items-center justify-center">
                     <Tv className="w-4 h-4" />
                   </div>
                   <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
@@ -360,12 +349,12 @@ export const HomePage: React.FC<HomePageProps> = ({
             </section>
           )}
 
-          {/* Anime Movies (if available) */}
+          {/* Anime Movies */}
           {movieAnime.length > 0 && (
-            <section className="space-y-3">
+            <section className="space-y-3.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-1 bg-red-100 text-[#E50914] rounded-lg">
+                  <div className="w-7 h-7 rounded-lg bg-red-100 text-[#E50914] flex items-center justify-center">
                     <Clapperboard className="w-4 h-4" />
                   </div>
                   <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
@@ -383,9 +372,9 @@ export const HomePage: React.FC<HomePageProps> = ({
             </section>
           )}
 
-          {/* All Catalog Grid (if more titles exist) */}
+          {/* All Catalog Grid */}
           {animeList.length > 4 && (
-            <section className="space-y-3">
+            <section className="space-y-3.5">
               <div className="flex items-center justify-between">
                 <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                   All Catalog
@@ -403,31 +392,31 @@ export const HomePage: React.FC<HomePageProps> = ({
             </section>
           )}
 
-          {/* Android App Showcase Card */}
-          <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white rounded-3xl border border-slate-700/60 p-5 sm:p-8">
+          {/* White UI Android App Showcase Card */}
+          <section className="relative overflow-hidden bg-white text-slate-900 rounded-[28px] sm:rounded-[36px] border border-slate-200 shadow-sm p-6 sm:p-9">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-              <div className="md:col-span-7 space-y-3 text-left">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full text-xs font-semibold">
+              <div className="md:col-span-7 space-y-3.5 text-left">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 text-[#E50914] border border-red-200/80 rounded-full text-xs font-semibold">
                   <Smartphone className="w-3.5 h-3.5" />
                   <span>Anime Trix Android App</span>
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-extrabold tracking-tight leading-snug">
+                <h3 className="text-xl sm:text-3xl font-black tracking-tight leading-snug text-slate-900">
                   Watch Full HD Episodes in the Official App
                 </h3>
 
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  Fast 1080p streaming with Bangla Dub, Hindi Dub, and multi-subtitles with zero buffer.
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-lg">
+                  Ultra-fast 1080p streaming with Bangla Dub, Hindi Dub, and zero buffering on your mobile device.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                <div className="flex flex-wrap items-center gap-2.5 pt-2">
                   <button
                     onClick={() => {
                       openInAnimeTrixApp({
                         onNonAndroid: () => onOpenDownloadModal(),
                       });
                     }}
-                    className="min-h-[40px] px-5 py-2 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/30 active:scale-95 transition-all flex items-center gap-1.5"
+                    className="min-h-[42px] px-6 py-2 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs sm:text-sm rounded-full shadow-lg shadow-red-500/25 active:scale-95 transition-all flex items-center gap-2"
                   >
                     <Smartphone className="w-4 h-4" />
                     <span>Open App</span>
@@ -435,9 +424,9 @@ export const HomePage: React.FC<HomePageProps> = ({
 
                   <button
                     onClick={onOpenDownloadModal}
-                    className="min-h-[40px] px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs rounded-xl transition-colors flex items-center gap-1.5"
+                    className="min-h-[42px] px-5 py-2 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 font-semibold text-xs sm:text-sm rounded-full transition-all flex items-center gap-2 active:scale-95"
                   >
-                    <Download className="w-4 h-4" />
+                    <Download className="w-4 h-4 text-[#E50914]" />
                     <span>Download APK</span>
                   </button>
                 </div>
@@ -445,7 +434,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
               {/* Showcase App Mockup Visual */}
               <div className="md:col-span-5 flex justify-center">
-                <div className="relative w-full max-w-[220px] aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/20">
+                <div className="relative w-full max-w-[220px] aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-slate-200">
                   <img
                     src={appMockupImage}
                     alt="Anime Trix Android App Interface"

@@ -75,7 +75,6 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
     };
   }, [animeId, allAnime]);
 
-  // Extract unique seasons dynamically from episodes list
   const seasonsList = useMemo(() => {
     const seasons = new Set<number>();
     episodes.forEach((ep) => {
@@ -86,15 +85,12 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
     return Array.from(seasons).sort((a, b) => a - b);
   }, [episodes]);
 
-  // Filter episodes based on selected season and search query
   const filteredEpisodes = useMemo(() => {
     return episodes.filter((ep) => {
-      // Season filter
       if (selectedSeason !== 'all') {
         if (ep.seasonNumber !== selectedSeason) return false;
       }
 
-      // Search query filter
       if (episodeSearchQuery.trim()) {
         const q = episodeSearchQuery.toLowerCase().trim();
         const epNum = ep.episodeNumber.toString();
@@ -144,7 +140,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
     return (
       <div className="py-24 flex flex-col items-center justify-center text-center space-y-3">
         <Loader2 className="w-8 h-8 text-[#E50914] animate-spin" />
-        <p className="text-sm font-medium text-slate-600">Loading anime details...</p>
+        <p className="text-sm font-medium text-slate-500">Loading anime details...</p>
       </div>
     );
   }
@@ -158,7 +154,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
         </p>
         <Link
           to="/"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#E50914] text-white text-sm font-semibold rounded-xl"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#E50914] text-white text-sm font-bold rounded-full"
         >
           <ChevronLeft className="w-4 h-4" />
           <span>Back to Home</span>
@@ -171,11 +167,10 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
   const backdropImage = anime.backdropUrl || anime.posterUrl || fallbackBackdrop;
   const isMovie = anime.contentType?.toLowerCase().includes('movie');
 
-  // Related anime
   const relatedAnime = allAnime.filter((a) => a.id !== anime.id).slice(0, 5);
 
   return (
-    <div className="space-y-8 md:space-y-10">
+    <div className="space-y-8 md:space-y-12">
       {/* Breadcrumb Back Link */}
       <div>
         <Link
@@ -188,7 +183,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
       </div>
 
       {/* Hero Header with Cinematic Backdrop */}
-      <section className="relative rounded-3xl overflow-hidden bg-slate-950 border border-slate-200 shadow-sm">
+      <section className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden bg-slate-950 border border-slate-200 shadow-sm">
         <div className="relative aspect-[21/9] sm:aspect-[24/9] max-h-[340px] w-full overflow-hidden">
           <img
             src={backdropImage}
@@ -199,11 +194,11 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
         </div>
 
-        {/* Content Container Split */}
-        <div className="relative px-4 pb-6 pt-0 sm:px-8 -mt-20 sm:-mt-28">
+        {/* Content Container */}
+        <div className="relative px-4 pb-6 pt-0 sm:px-8 -mt-20 sm:-mt-28 z-10">
           <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
             {/* Poster Card */}
-            <div className="w-28 sm:w-44 aspect-[3/4] rounded-2xl overflow-hidden bg-slate-800 shadow-xl border-2 border-white/20 shrink-0">
+            <div className="w-28 sm:w-44 aspect-[3/4] rounded-[22px] overflow-hidden bg-slate-800 shadow-xl border-2 border-white/20 shrink-0">
               <img
                 src={anime.posterUrl || backdropImage}
                 alt={anime.title}
@@ -215,7 +210,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
             {/* Title & Metadata */}
             <div className="flex-1 space-y-2.5 sm:space-y-3 text-white">
               <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-300">
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/15 text-white font-medium">
+                <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/15 text-white font-medium">
                   {isMovie ? <Film className="w-3 h-3 text-red-400" /> : <Tv className="w-3 h-3 text-red-400" />}
                   {anime.contentType || 'TV Series'}
                 </span>
@@ -223,7 +218,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 {anime.releaseYear && (
                   <>
                     <span className="text-slate-500">·</span>
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1 text-slate-200">
                       <Calendar className="w-3 h-3 text-slate-400" />
                       {anime.releaseYear}
                     </span>
@@ -233,7 +228,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 {anime.rating && (
                   <>
                     <span className="text-slate-500">·</span>
-                    <span className="flex items-center gap-1 text-amber-300 font-bold font-mono tabular-nums">
+                    <span className="flex items-center gap-1 text-amber-300 font-bold font-mono">
                       <Star className="w-3.5 h-3.5 fill-amber-300" />
                       {anime.rating}
                     </span>
@@ -241,7 +236,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 )}
               </div>
 
-              <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+              <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
                 {anime.title}
               </h1>
 
@@ -251,7 +246,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                   {anime.genres.map((genre) => (
                     <span
                       key={genre}
-                      className="text-[11px] px-2 py-0.5 bg-white/10 text-slate-200 rounded-md border border-white/10"
+                      className="text-[11px] px-2.5 py-0.5 bg-white/10 text-slate-200 rounded-full border border-white/10"
                     >
                       {genre}
                     </span>
@@ -259,12 +254,12 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 </div>
               )}
 
-              {/* Admin Dub Badges */}
+              {/* Audio Dub Badges */}
               {anime.availableDubs && anime.availableDubs.length > 0 && (
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
                   <span className="text-xs text-slate-400 flex items-center gap-1 mr-1">
                     <Globe className="w-3.5 h-3.5 text-red-400" />
-                    Audio Dub:
+                    Audio:
                   </span>
                   {anime.availableDubs.map((dub) => {
                     const isSelected = selectedDub === dub;
@@ -272,7 +267,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                       <button
                         key={dub}
                         onClick={() => setSelectedDub(dub)}
-                        className={`text-xs font-semibold px-2.5 py-0.5 rounded-md transition-all ${
+                        className={`text-xs font-semibold px-3 py-1 rounded-full transition-all active:scale-95 ${
                           isSelected
                             ? 'bg-[#E50914] text-white shadow-xs'
                             : 'bg-white/15 text-slate-200 hover:bg-white/25 border border-white/10'
@@ -289,7 +284,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
               <div className="flex flex-wrap items-center gap-2.5 pt-2">
                 <button
                   onClick={handleOpenApp}
-                  className="min-h-[42px] px-5 sm:px-6 py-2 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-red-600/30 active:scale-95 transition-all flex items-center gap-2"
+                  className="min-h-[44px] px-6 sm:px-7 py-2.5 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs sm:text-sm rounded-full shadow-lg shadow-red-600/30 active:scale-95 transition-all flex items-center gap-2"
                 >
                   <Smartphone className="w-4 h-4" />
                   <span>Open App / অ্যাপে দেখুন</span>
@@ -297,9 +292,9 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
 
                 <button
                   onClick={handleShare}
-                  className="min-h-[42px] px-4 py-2 bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5"
+                  className="min-h-[44px] px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-semibold rounded-full transition-all flex items-center gap-1.5 active:scale-95"
                 >
-                  <Share2 className="w-4 h-4" />
+                  <Share2 className="w-4 h-4 text-slate-300" />
                   <span>Share</span>
                 </button>
               </div>
@@ -308,22 +303,22 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
         </div>
       </section>
 
-      {/* Details / Synopsis Section */}
-      <section className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-7 space-y-2">
+      {/* Details & Synopsis Card (Clean White UI) */}
+      <section className="bg-white rounded-[26px] border border-slate-200 p-5 sm:p-7 space-y-2 shadow-xs">
         <h2 className="text-base font-bold text-slate-900 tracking-tight">Details & Synopsis</h2>
         <p className="text-slate-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
           {anime.description || 'No synopsis available for this title.'}
         </p>
       </section>
 
-      {/* Seasons & Episodes Control Hub (Interactive Season Switcher) */}
+      {/* Seasons & Episodes Control Hub */}
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <Layers className="w-5 h-5 text-[#E50914]" />
               <span>Episodes List</span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-mono">
                 {episodes.length}
               </span>
             </h2>
@@ -332,16 +327,16 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
             </p>
           </div>
 
-          {/* Episode Quick Search Input */}
+          {/* Episode Quick Search */}
           {episodes.length > 5 && (
             <div className="relative w-full sm:w-56">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
               <input
                 type="text"
                 value={episodeSearchQuery}
                 onChange={(e) => setEpisodeSearchQuery(e.target.value)}
                 placeholder="Find episode (e.g. 361)..."
-                className="w-full h-9 pl-9 pr-8 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:bg-white"
+                className="w-full h-9 pl-9 pr-8 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:bg-white"
               />
               {episodeSearchQuery && (
                 <button
@@ -355,9 +350,9 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
           )}
         </div>
 
-        {/* Season Selector Tabs (Allows changing seasons like Season 16, Season 17, etc.) */}
+        {/* Season Selector Tabs */}
         {seasonsList.length > 1 && (
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 border-b border-slate-100">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 border-b border-slate-200/80">
             <span className="text-xs font-semibold text-slate-500 mr-1 flex items-center gap-1 shrink-0">
               <SlidersHorizontal className="w-3.5 h-3.5 text-[#E50914]" />
               Season:
@@ -365,7 +360,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
 
             <button
               onClick={() => setSelectedSeason('all')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap transition-all active:scale-95 ${
                 selectedSeason === 'all'
                   ? 'bg-slate-900 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -380,7 +375,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 <button
                   key={season}
                   onClick={() => setSelectedSeason(season)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap transition-all ${
+                  className={`px-3.5 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap transition-all active:scale-95 ${
                     selectedSeason === season
                       ? 'bg-[#E50914] text-white shadow-xs'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -406,8 +401,8 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-            <p className="text-xs sm:text-sm font-medium text-slate-700">
+          <div className="p-8 text-center bg-white border border-slate-200 rounded-2xl space-y-2 shadow-xs">
+            <p className="text-xs sm:text-sm font-medium text-slate-600">
               No episodes match your search or filter.
             </p>
             <button
@@ -415,7 +410,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 setSelectedSeason('all');
                 setEpisodeSearchQuery('');
               }}
-              className="mt-2 px-3 py-1.5 bg-slate-900 text-white text-xs font-semibold rounded-lg"
+              className="mt-2 px-4 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-full active:scale-95"
             >
               Reset Filters
             </button>
@@ -425,7 +420,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
 
       {/* More Anime & Movies Recommendation Grid */}
       {relatedAnime.length > 0 && (
-        <section className="space-y-3 pt-4 border-t border-slate-200">
+        <section className="space-y-3.5 pt-4 border-t border-slate-200">
           <div className="flex items-center justify-between">
             <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
               More Anime & Movies

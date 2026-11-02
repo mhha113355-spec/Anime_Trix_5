@@ -1,7 +1,14 @@
 import React, { useEffect } from 'react';
-import { X, Download, Smartphone, QrCode, ShieldCheck, Zap, Globe, Sparkles, Check } from 'lucide-react';
+import {
+  Download,
+  Smartphone,
+  CheckCircle2,
+  X,
+  QrCode,
+  ShieldCheck,
+  Zap,
+} from 'lucide-react';
 import { AppSettings } from '../types';
-import { ANDROID_PACKAGE_NAME } from '../lib/deepLink';
 
 interface ApkDownloadModalProps {
   isOpen: boolean;
@@ -32,7 +39,6 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Priority: 1. Firestore appConfig/settings.apkDownloadUrl, 2. Direct hosted /AnimeTrix.apk
   const downloadUrl =
     appSettings.apkDownloadUrl ||
     '/AnimeTrix.apk';
@@ -51,82 +57,57 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
     >
       <div
-        className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all max-h-[90vh] flex flex-col"
+        className="relative w-full max-w-lg bg-white rounded-[32px] shadow-2xl border border-slate-100 overflow-hidden transform transition-all max-h-[90vh] flex flex-col text-slate-900"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with crimson brand splash */}
         <div className="relative bg-gradient-to-r from-red-600 to-[#E50914] text-white p-6 pb-7">
           <button
             onClick={onClose}
-            aria-label="Close dialog"
-            className="absolute top-4 right-4 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors"
+            aria-label="Close download modal"
+            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 text-white flex items-center justify-center transition-colors active:scale-90"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white shadow-md flex items-center justify-center shrink-0 p-1.5 overflow-hidden">
-              <img src="/logo.png" alt="Anime Trix" className="w-full h-full object-contain" />
+            <div className="w-12 h-12 rounded-2xl bg-white p-1 shadow-md border border-white/40 shrink-0">
+              <img src="/logo.png" alt="Anime Trix" className="w-full h-full object-contain rounded-xl" />
             </div>
             <div>
-              <h2 id="modal-title" className="text-xl font-bold tracking-tight">
-                Get Anime Trix for Android
+              <h2 id="modal-title" className="text-xl font-black tracking-tight leading-tight">
+                Anime Trix for Android
               </h2>
-              <p className="text-red-100 text-xs font-medium mt-0.5">
-                অফিসিয়াল অ্যানিমে স্ট্রিমিং অ্যাপ • 100% Free
+              <p className="text-xs text-red-100 mt-0.5">
+                Official high-speed anime streaming installer
               </p>
             </div>
           </div>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto space-y-5">
-          {/* Key app features */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl flex items-start gap-2.5">
-              <div className="p-1.5 bg-red-100 text-[#E50914] rounded-lg shrink-0">
-                <Zap className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-slate-900">1080p Ultra HD</p>
-                <p className="text-[11px] text-slate-500">Zero buffering streaming</p>
+        <div className="p-6 space-y-5 overflow-y-auto">
+          {/* Key Features Grid */}
+          <div className="grid grid-cols-2 gap-2.5">
+            <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200/80 rounded-2xl">
+              <Zap className="w-4 h-4 text-amber-500 shrink-0" />
+              <div className="text-left">
+                <p className="text-xs font-bold text-slate-900">Zero Buffering</p>
+                <p className="text-[10px] text-slate-500">High-speed CDN</p>
               </div>
             </div>
-
-            <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl flex items-start gap-2.5">
-              <div className="p-1.5 bg-red-100 text-[#E50914] rounded-lg shrink-0">
-                <Globe className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-slate-900">Bangla & Hindi Dub</p>
-                <p className="text-[11px] text-slate-500">Multilingual audio support</p>
-              </div>
-            </div>
-
-            <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl flex items-start gap-2.5">
-              <div className="p-1.5 bg-red-100 text-[#E50914] rounded-lg shrink-0">
-                <Smartphone className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-slate-900">1-Tap Deep Link</p>
-                <p className="text-[11px] text-slate-500">Direct open from links</p>
-              </div>
-            </div>
-
-            <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl flex items-start gap-2.5">
-              <div className="p-1.5 bg-red-100 text-[#E50914] rounded-lg shrink-0">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-slate-900">Secure & Clean</p>
-                <p className="text-[11px] text-slate-500">Verified official build</p>
+            <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200/80 rounded-2xl">
+              <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+              <div className="text-left">
+                <p className="text-xs font-bold text-slate-900">Safe & Verified</p>
+                <p className="text-[10px] text-slate-500">Official Build</p>
               </div>
             </div>
           </div>
 
-          {/* Desktop QR Scan Section */}
+          {/* Desktop QR Scan Section (Package name removed) */}
           <div className="hidden sm:flex items-center gap-4 p-4 bg-slate-50 border border-slate-200/80 rounded-2xl">
-            <div className="w-24 h-24 bg-white p-1 rounded-xl shadow-xs border border-slate-200 shrink-0 flex items-center justify-center">
+            <div className="w-24 h-24 bg-white p-1 rounded-2xl shadow-xs border border-slate-200 shrink-0 flex items-center justify-center">
               <img
                 src={qrCodeUrl}
                 alt="Scan to download Anime Trix APK"
@@ -142,7 +123,6 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
               <p className="text-xs text-slate-600 leading-relaxed">
                 Point your phone camera to download the APK installer directly onto your device.
               </p>
-              <p className="text-[11px] text-slate-400 font-mono">{ANDROID_PACKAGE_NAME}</p>
             </div>
           </div>
 
@@ -153,10 +133,10 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
               download="AnimeTrix.apk"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full min-h-[50px] px-6 py-3 bg-[#E50914] hover:bg-[#C80811] text-white font-semibold text-sm rounded-xl shadow-lg shadow-red-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-center"
+              className="w-full min-h-[50px] px-6 py-3 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-sm rounded-full shadow-lg shadow-red-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-center"
             >
               <Download className="w-4 h-4 shrink-0" />
-              <span>Download Anime Trix APK (Android)</span>
+              <span>Download Anime Trix APK (9.8 MB)</span>
             </a>
             <p className="text-center text-[11px] text-slate-500">
               Direct APK installer • Saves directly to phone Downloads

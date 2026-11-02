@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Smartphone, X } from 'lucide-react';
-import { openInAnimeTrixApp } from '../lib/deepLink';
+import { Download, X } from 'lucide-react';
 
 interface MobileStickyBannerProps {
   onOpenDownloadModal: () => void;
@@ -11,67 +10,63 @@ interface MobileStickyBannerProps {
 
 export const MobileStickyBanner: React.FC<MobileStickyBannerProps> = ({
   onOpenDownloadModal,
-  animeId,
-  episodeId,
-  dub,
 }) => {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    // Check session storage
     if (sessionStorage.getItem('animetrix_banner_dismissed') === '1') {
       setDismissed(true);
     }
   }, []);
 
-  const handleDismiss = () => {
+  const handleDismiss = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setDismissed(true);
     sessionStorage.setItem('animetrix_banner_dismissed', '1');
-  };
-
-  const handleOpen = () => {
-    openInAnimeTrixApp({
-      animeId,
-      episodeId,
-      dub,
-      onNonAndroid: () => {
-        onOpenDownloadModal();
-      },
-    });
   };
 
   if (dismissed) return null;
 
   return (
     <aside
-      aria-label="Mobile app banner"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 shadow-lg shadow-black/5"
+      aria-label="Mobile download banner"
+      className="md:hidden fixed bottom-3 left-3 right-3 z-40 max-w-md mx-auto"
     >
-      <div className="max-w-md mx-auto flex items-center justify-between gap-2.5 h-11">
+      {/* Clean White UI Floating Download Bar (Replacing Open App) */}
+      <div className="flex items-center justify-between gap-2.5 px-3.5 py-2.5 rounded-full bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(15,23,42,0.15)] animate-in slide-in-from-bottom-4 duration-300">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shrink-0 shadow-xs overflow-hidden p-0.5">
-            <img src="/logo.png" alt="Anime Trix" className="w-full h-full object-contain" />
+          <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden p-0.5 shadow-2xs">
+            <img src="/logo.png" alt="Anime Trix" className="w-full h-full object-contain rounded-full" />
           </div>
           <div className="min-w-0">
             <p className="text-xs font-bold text-slate-900 truncate">Anime Trix Android App</p>
-            <p className="text-[10px] text-slate-500 truncate">Watch in 1080p HD with Dub</p>
+            <p className="text-[10px] text-slate-500 truncate">Free Download (9.8 MB APK)</p>
           </div>
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0">
-          <button
-            onClick={handleOpen}
-            className="px-3 py-1.5 bg-[#E50914] hover:bg-[#C80811] text-white text-[11px] font-bold rounded-lg shadow-xs active:scale-95 transition-all whitespace-nowrap min-h-[36px] flex items-center gap-1"
+          {/* Direct Download Button (Replaces Open App) */}
+          <a
+            href="/AnimeTrix.apk"
+            download="AnimeTrix.apk"
+            onClick={(e) => {
+              // Also open modal on non-direct devices if needed
+              if (!/Android/i.test(navigator.userAgent)) {
+                e.preventDefault();
+                onOpenDownloadModal();
+              }
+            }}
+            className="px-3.5 py-1.5 bg-[#E50914] hover:bg-[#C80811] text-white text-[11px] font-bold rounded-full shadow-[0_2px_12px_rgba(229,9,20,0.35)] active:scale-95 transition-all whitespace-nowrap min-h-[34px] flex items-center gap-1.5 cursor-pointer text-center"
           >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span>Open App</span>
-          </button>
+            <Download className="w-3.5 h-3.5" />
+            <span>Download APK</span>
+          </a>
           <button
             onClick={handleDismiss}
-            aria-label="Dismiss app banner"
-            className="min-w-[32px] min-h-[32px] flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
+            aria-label="Dismiss download banner"
+            className="w-7 h-7 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 transition-colors active:scale-90"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>

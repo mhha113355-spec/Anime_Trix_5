@@ -79,7 +79,7 @@ export default function App() {
     <ToastProvider>
       <BrowserRouter>
         <ScrollToTop />
-        <div className="min-h-screen flex flex-col bg-white text-slate-900 pb-16 md:pb-0">
+        <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 pb-20 md:pb-0 relative overflow-x-hidden">
           {/* Top Sticky Navbar */}
           <Navbar
             onOpenDownloadModal={() => setDownloadModalOpen(true)}
