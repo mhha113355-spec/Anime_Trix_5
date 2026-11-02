@@ -187,7 +187,7 @@ export default defineConfig(() => {
     },
     preview: {
       host: '0.0.0.0',
-      allowedHosts: ['anime-trix-5.onrender.com', '.onrender.com'],
+      allowedHosts: ['animetrix-nwaz.onrender.com', 'anime-trix-5.onrender.com', '.onrender.com'],
     },
   };
 });
