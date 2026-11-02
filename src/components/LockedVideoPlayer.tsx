@@ -6,6 +6,7 @@ import {
   Download,
   Globe,
   CheckCircle2,
+  Play,
 } from 'lucide-react';
 import { Episode, Anime } from '../types';
 import { openInAnimeTrixApp } from '../lib/deepLink';
@@ -74,10 +75,10 @@ export const LockedVideoPlayer: React.FC<LockedVideoPlayerProps> = ({
 
   return (
     <div className="w-full space-y-4">
-      {/* 16:9 Cinematic Locked Video Preview Player */}
+      {/* 16:9 Cinematic Video Player Box (Clean & Immersive) */}
       <div
         onClick={handleOpenApp}
-        className="group relative aspect-video w-full rounded-[24px] sm:rounded-[32px] overflow-hidden bg-slate-950 shadow-xl border border-slate-200 cursor-pointer select-none"
+        className="group relative aspect-video w-full rounded-[24px] sm:rounded-[32px] overflow-hidden bg-slate-950 shadow-lg border border-slate-200 cursor-pointer select-none"
       >
         {/* Background Backdrop Image */}
         <img
@@ -85,11 +86,11 @@ export const LockedVideoPlayer: React.FC<LockedVideoPlayerProps> = ({
           alt={episode.title}
           onError={() => setImageError(true)}
           referrerPolicy="no-referrer"
-          className="w-full h-full object-cover opacity-45 filter blur-[0.5px] group-hover:scale-105 transition-transform duration-700 ease-out"
+          className="w-full h-full object-cover opacity-55 filter blur-[0.3px] group-hover:scale-105 transition-transform duration-700 ease-out"
         />
 
         {/* Ambient Dark Gradient Scrim */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/50" />
 
         {/* Top Badges */}
         <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 flex items-center gap-2">
@@ -106,43 +107,37 @@ export const LockedVideoPlayer: React.FC<LockedVideoPlayerProps> = ({
         {/* Top Right Duration */}
         {episode.durationFormatted && (
           <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-            <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md text-slate-300 text-[10px] sm:text-xs font-mono font-medium rounded-full border border-white/15">
+            <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md text-slate-200 text-[10px] sm:text-xs font-mono font-medium rounded-full border border-white/15">
               {episode.durationFormatted}
             </span>
           </div>
         )}
 
-        {/* Center Screen: Glowing Lock Icon & Direct Notice */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center z-10 space-y-2.5">
-          {/* Glowing Play & Lock Badge */}
-          <div className="relative">
-            <div className="w-13 h-13 sm:w-16 sm:h-16 rounded-full bg-[#E50914] text-white flex items-center justify-center shadow-lg shadow-red-600/40 group-hover:scale-110 transition-transform duration-300">
-              <Lock className="w-6 h-6 sm:w-7 sm:h-7" />
-            </div>
-            <div className="absolute -inset-1.5 rounded-full bg-red-500/25 animate-ping -z-10" />
+        {/* Center Screen: Elegant Play Button & Clear Notice */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center z-10 space-y-2">
+          {/* Play Button Circle */}
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#E50914] text-white flex items-center justify-center shadow-lg shadow-red-600/40 group-hover:scale-110 transition-transform duration-300">
+            <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-current ml-0.5" />
           </div>
 
-          <div className="space-y-1 max-w-sm px-2">
-            <h3 className="text-white font-extrabold text-sm sm:text-base tracking-tight leading-snug drop-shadow-md">
-              {episode.title}
-            </h3>
-            <p className="text-red-300 text-xs sm:text-sm font-semibold font-bengali">
-              এই ভিডিওটি শুধুমাত্র Anime Trix অ্যাপে দেখা যাবে
+          <div className="space-y-0.5 max-w-sm px-2">
+            <p className="text-white text-xs sm:text-sm font-semibold font-bengali">
+              অ্যাপে দেখতে এখানে ট্যাপ করুন
             </p>
             <p className="text-slate-300 text-[11px] sm:text-xs">
-              Tap anywhere to watch full episode in App
+              Watch full episode in Anime Trix App
             </p>
           </div>
         </div>
       </div>
 
-      {/* Unified White UI Episode Control Card */}
-      <div className="p-4 sm:p-7 bg-white rounded-[26px] sm:rounded-[32px] border border-slate-200 shadow-xs space-y-4">
+      {/* Unified White UI Episode Control Card (Refined & Professional) */}
+      <div className="p-4 sm:p-7 bg-white rounded-[26px] sm:rounded-[32px] border border-slate-200/90 shadow-sm space-y-4">
         {/* Title & Metadata Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-100">
           <div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
-              <span className="font-bold text-[#E50914] font-mono">EPISODE {episode.episodeNumber}</span>
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1 font-mono">
+              <span className="font-bold text-[#E50914]">EPISODE {episode.episodeNumber}</span>
               {parentAnime?.releaseYear && (
                 <>
                   <span className="text-slate-300">·</span>
@@ -196,7 +191,7 @@ export const LockedVideoPlayer: React.FC<LockedVideoPlayerProps> = ({
         <div className="space-y-2.5">
           <button
             onClick={handleOpenApp}
-            className="w-full min-h-[50px] sm:min-h-[54px] px-6 py-3 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-sm sm:text-base rounded-full shadow-lg shadow-red-600/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            className="w-full min-h-[50px] sm:min-h-[54px] px-6 py-3 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-sm sm:text-base rounded-full shadow-lg shadow-red-600/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           >
             <Smartphone className="w-5 h-5 shrink-0" />
             <span>Open in Anime Trix App / অ্যাপে দেখুন</span>

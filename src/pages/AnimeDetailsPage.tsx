@@ -182,23 +182,24 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
         </Link>
       </div>
 
-      {/* Hero Header with Cinematic Backdrop */}
-      <section className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden bg-slate-950 border border-slate-200 shadow-sm">
-        <div className="relative aspect-[21/9] sm:aspect-[24/9] max-h-[340px] w-full overflow-hidden">
+      {/* Hero Header (Optimized for both Mobile & Desktop Screens) */}
+      <section className="relative rounded-[24px] sm:rounded-[36px] overflow-hidden bg-slate-950 border border-slate-200 shadow-sm">
+        {/* Backdrop Image Banner */}
+        <div className="relative aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[320px] w-full overflow-hidden">
           <img
             src={backdropImage}
             alt={anime.title}
             referrerPolicy="no-referrer"
-            className="w-full h-full object-cover opacity-60 filter blur-[1px]"
+            className="w-full h-full object-cover opacity-50 filter blur-[0.5px]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
         </div>
 
-        {/* Content Container */}
-        <div className="relative px-4 pb-6 pt-0 sm:px-8 -mt-20 sm:-mt-28 z-10">
-          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+        {/* Content Container (Perfect spacing for mobile & PC) */}
+        <div className="relative px-4 pb-6 pt-0 sm:px-8 -mt-20 sm:-mt-28 md:-mt-32 z-10">
+          <div className="flex flex-col md:flex-row items-center md:items-end gap-5 md:gap-8">
             {/* Poster Card */}
-            <div className="w-28 sm:w-44 aspect-[3/4] rounded-[22px] overflow-hidden bg-slate-800 shadow-xl border-2 border-white/20 shrink-0">
+            <div className="w-32 sm:w-40 md:w-48 aspect-[3/4] rounded-[20px] overflow-hidden bg-slate-800 shadow-2xl border-4 border-white/90 shrink-0">
               <img
                 src={anime.posterUrl || backdropImage}
                 alt={anime.title}
@@ -208,8 +209,8 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
             </div>
 
             {/* Title & Metadata */}
-            <div className="flex-1 space-y-2.5 sm:space-y-3 text-white">
-              <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-300">
+            <div className="flex-1 space-y-2.5 sm:space-y-3 text-white text-center md:text-left w-full">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 text-xs text-slate-300">
                 <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/15 text-white font-medium">
                   {isMovie ? <Film className="w-3 h-3 text-red-400" /> : <Tv className="w-3 h-3 text-red-400" />}
                   {anime.contentType || 'TV Series'}
@@ -236,13 +237,13 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 )}
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-tight">
                 {anime.title}
               </h1>
 
               {/* Genre Chips */}
               {anime.genres && anime.genres.length > 0 && (
-                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 pt-0.5">
                   {anime.genres.map((genre) => (
                     <span
                       key={genre}
@@ -256,7 +257,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
 
               {/* Audio Dub Badges */}
               {anime.availableDubs && anime.availableDubs.length > 0 && (
-                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 pt-1">
                   <span className="text-xs text-slate-400 flex items-center gap-1 mr-1">
                     <Globe className="w-3.5 h-3.5 text-red-400" />
                     Audio:
@@ -281,7 +282,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
               )}
 
               {/* CTA Action Buttons */}
-              <div className="flex flex-wrap items-center gap-2.5 pt-2">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 pt-2">
                 <button
                   onClick={handleOpenApp}
                   className="min-h-[44px] px-6 sm:px-7 py-2.5 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs sm:text-sm rounded-full shadow-lg shadow-red-600/30 active:scale-95 transition-all flex items-center gap-2"
