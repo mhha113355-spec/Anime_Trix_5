@@ -171,79 +171,27 @@ export const WatchEpisodePage: React.FC<WatchEpisodePageProps> = ({
         />
       </section>
 
-      {/* Episode & Anime Details Summary */}
-      <section className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-5">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-          <div>
-            <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-              <span className="font-bold text-[#E50914]">EPISODE {episode.episodeNumber}</span>
-              {parentAnime?.releaseYear && (
-                <>
-                  <span aria-hidden="true">·</span>
-                  <span>{parentAnime.releaseYear}</span>
-                </>
-              )}
-              {parentAnime?.contentType && (
-                <>
-                  <span aria-hidden="true">·</span>
-                  <span>{parentAnime.contentType}</span>
-                </>
-              )}
-            </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-              {episode.title}
-            </h1>
-            {parentAnime && (
-              <p className="text-sm font-semibold text-slate-600 mt-0.5">
-                {parentAnime.title}
-              </p>
-            )}
-          </div>
-
-          {/* Quick launch in app button */}
-          <button
-            onClick={() => {
-              openInAnimeTrixApp({
-                episodeId: episode.id,
-                animeId: parentAnime?.id || episode.animeId,
-                dub: selectedDub,
-                onNonAndroid: () => onOpenDownloadModal(),
-              });
-            }}
-            className="min-h-[42px] px-5 py-2.5 bg-[#E50914] hover:bg-[#C80811] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all flex items-center gap-2 shrink-0 self-start sm:self-center"
-          >
-            <Smartphone className="w-4 h-4" />
-            <span>Open in App / অ্যাপে দেখুন</span>
-          </button>
-        </div>
-
-        {/* Synopsis / Description */}
-        {parentAnime?.description && (
-          <div className="space-y-2">
+      {/* Synopsis / Description Section */}
+      {parentAnime?.description && (
+        <section className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 p-4 sm:p-6 space-y-2">
+          <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Anime Synopsis
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              {parentAnime.description}
-            </p>
-          </div>
-        )}
-
-        {/* Admin Dub badges strictly from availableDubs */}
-        {parentAnime?.availableDubs && parentAnime.availableDubs.length > 0 && (
-          <div className="pt-2 flex flex-wrap items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">Available Dubs:</span>
-            {parentAnime.availableDubs.map((dub) => (
-              <span
-                key={dub}
-                className="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md border border-slate-200"
+            {parentAnime?.id && (
+              <Link
+                to={`/anime/${parentAnime.id}`}
+                className="text-xs font-semibold text-[#E50914] hover:underline"
               >
-                {dub}
-              </span>
-            ))}
+                View Full Anime Details
+              </Link>
+            )}
           </div>
-        )}
-      </section>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+            {parentAnime.description}
+          </p>
+        </section>
+      )}
 
       {/* Other Episodes from this Anime */}
       {allEpisodes.length > 1 && (

@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Lock, Smartphone, Share2, Download, Check, Sparkles, AlertCircle, Globe } from 'lucide-react';
+import {
+  Lock,
+  Smartphone,
+  Share2,
+  Download,
+  Globe,
+  Play,
+  ShieldCheck,
+  Zap,
+  CheckCircle2,
+} from 'lucide-react';
 import { Episode, Anime } from '../types';
 import { openInAnimeTrixApp } from '../lib/deepLink';
 import { useToast } from './Toast';
@@ -44,13 +54,11 @@ export const LockedVideoPlayer: React.FC<LockedVideoPlayerProps> = ({
 
     if (navigator.share) {
       try {
-        await navigator.share({
-          url: url,
-        });
-        showToast('Link copied / shared successfully!');
+        await navigator.share({ url });
+        showToast('Clean link shared successfully!');
         return;
       } catch (err) {
-        // User cancelled or share failed, fallback to copy
+        // Fallback to copy
       }
     }
 
@@ -69,128 +77,169 @@ export const LockedVideoPlayer: React.FC<LockedVideoPlayerProps> = ({
 
   return (
     <div className="w-full space-y-4">
-      {/* 16:9 YouTube-style Locked Preview Box (STRICT NO-WEB-PLAYBACK) */}
-      <div className="relative aspect-video w-full rounded-2xl md:rounded-3xl overflow-hidden bg-slate-950 shadow-xl border border-slate-200">
-        {/* Background Backdrop / Thumbnail Image */}
+      {/* 16:9 Cinematic Locked Video Preview Player */}
+      <div
+        onClick={handleOpenApp}
+        className="group relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-950 shadow-xl border border-slate-200 cursor-pointer select-none"
+      >
+        {/* Background Backdrop Image */}
         <img
           src={displayImage}
           alt={episode.title}
           onError={() => setImageError(true)}
           referrerPolicy="no-referrer"
-          className="w-full h-full object-cover opacity-35 filter blur-[1px] transform scale-105"
+          className="w-full h-full object-cover opacity-45 filter blur-[0.5px] group-hover:scale-105 transition-transform duration-500"
         />
 
         {/* Ambient Dark Gradient Scrim */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/60" />
 
-        {/* Locked Preview Player Center Card */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-8 text-center z-10">
-          {/* Crimson Lock Badge */}
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#E50914] text-white flex items-center justify-center shadow-lg shadow-red-900/40 mb-3 sm:mb-4 animate-in zoom-in-95 duration-200">
-            <Lock className="w-7 h-7 sm:w-8 sm:h-8" />
-          </div>
-
-          {/* Episode identification */}
-          <div className="space-y-1 max-w-xl">
-            <p className="text-red-400 font-bold text-xs sm:text-sm tracking-wide uppercase">
-              Episode {episode.episodeNumber} {episode.durationFormatted ? `· ${episode.durationFormatted}` : ''}
-            </p>
-            <h2 className="text-lg sm:text-2xl font-extrabold text-white tracking-tight line-clamp-1">
-              {episode.title}
-            </h2>
-          </div>
-
-          {/* Locked Notice in Bengali & English */}
-          <div className="mt-2.5 sm:mt-3 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 max-w-md">
-            <p className="text-white text-xs sm:text-sm font-semibold font-bengali leading-relaxed">
-              এই ভিডিওটি শুধুমাত্র Anime Trix অ্যাপে দেখা যাবে
-            </p>
-            <p className="text-slate-300 text-[11px] sm:text-xs mt-0.5">
-              Watch full HD episodes exclusively in the Anime Trix Android App
-            </p>
-          </div>
-
-          {/* Primary CTA: 1-Tap Open App */}
-          <div className="mt-4 sm:mt-6 flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={handleOpenApp}
-              className="min-h-[46px] px-6 sm:px-8 py-2.5 sm:py-3 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-sm sm:text-base rounded-xl shadow-lg shadow-red-600/30 active:scale-[0.98] transition-all flex items-center gap-2 group"
-            >
-              <Smartphone className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>Open App / অ্যাপে দেখুন</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Video Quality Badge & Top Metadata */}
+        {/* Top Badges (No collision) */}
         <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 flex items-center gap-2">
-          <span className="px-2.5 py-1 bg-black/75 backdrop-blur-md text-white text-[11px] font-bold rounded-lg border border-white/10">
+          <span className="px-2.5 py-1 bg-black/75 backdrop-blur-md text-white text-[10px] sm:text-xs font-bold rounded-lg border border-white/15">
             1080p FHD
           </span>
           {selectedDub && (
-            <span className="px-2.5 py-1 bg-red-600/90 text-white text-[11px] font-bold rounded-lg border border-red-400/30">
+            <span className="px-2.5 py-1 bg-[#E50914] text-white text-[10px] sm:text-xs font-bold rounded-lg shadow-xs">
               {selectedDub}
             </span>
           )}
         </div>
+
+        {/* Top Right Duration */}
+        {episode.durationFormatted && (
+          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+            <span className="px-2 py-1 bg-black/75 backdrop-blur-md text-slate-200 text-[10px] sm:text-xs font-mono font-medium rounded-lg border border-white/15">
+              {episode.durationFormatted}
+            </span>
+          </div>
+        )}
+
+        {/* Center Screen: Elegant Glowing Lock Icon & Direct Notice */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center z-10 space-y-2.5">
+          {/* Glowing Play & Lock Badge */}
+          <div className="relative">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#E50914] text-white flex items-center justify-center shadow-lg shadow-red-600/40 group-hover:scale-110 transition-transform">
+              <Lock className="w-5 h-5 sm:w-7 sm:h-7" />
+            </div>
+            <div className="absolute -inset-1 rounded-full bg-red-500/20 animate-ping -z-10" />
+          </div>
+
+          <div className="space-y-1 max-w-sm px-2">
+            <h3 className="text-white font-extrabold text-sm sm:text-base tracking-tight leading-snug">
+              {episode.title}
+            </h3>
+            <p className="text-red-300 text-xs sm:text-sm font-semibold font-bengali">
+              এই ভিডিওটি শুধুমাত্র Anime Trix অ্যাপে দেখা যাবে
+            </p>
+            <p className="text-slate-300 text-[11px] sm:text-xs">
+              Tap anywhere to watch full episode in App
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Audio / Dub Selector if available */}
-      {availableDubs.length > 0 && (
-        <div className="p-3 sm:p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
-            <Globe className="w-4 h-4 text-[#E50914]" />
-            <span>Select Audio Language:</span>
+      {/* Unified Professional Episode Control Card */}
+      <div className="p-4 sm:p-6 bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-4">
+        {/* Title & Metadata Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div>
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
+              <span className="font-bold text-[#E50914]">EPISODE {episode.episodeNumber}</span>
+              {parentAnime?.releaseYear && (
+                <>
+                  <span className="text-slate-300">·</span>
+                  <span>{parentAnime.releaseYear}</span>
+                </>
+              )}
+              {parentAnime?.contentType && (
+                <>
+                  <span className="text-slate-300">·</span>
+                  <span>{parentAnime.contentType}</span>
+                </>
+              )}
+            </div>
+            <h1 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight">
+              {episode.title}
+            </h1>
+            {parentAnime && (
+              <p className="text-xs sm:text-sm font-semibold text-slate-600 mt-0.5">
+                {parentAnime.title}
+              </p>
+            )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5">
-            {availableDubs.map((dub) => {
-              const isSelected = selectedDub === dub || (!selectedDub && availableDubs[0] === dub);
-              return (
-                <button
-                  key={dub}
-                  onClick={() => onSelectDub && onSelectDub(dub)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all min-h-[36px] ${
-                    isSelected
-                      ? 'bg-[#E50914] text-white shadow-xs'
-                      : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  {dub}
-                </button>
-              );
-            })}
-          </div>
+          {/* Audio Dub Selector right in header */}
+          {availableDubs.length > 0 && (
+            <div className="flex items-center gap-1.5 self-start sm:self-center">
+              <Globe className="w-3.5 h-3.5 text-[#E50914] shrink-0" />
+              <div className="flex items-center gap-1">
+                {availableDubs.map((dub) => {
+                  const isSelected = selectedDub === dub || (!selectedDub && availableDubs[0] === dub);
+                  return (
+                    <button
+                      key={dub}
+                      onClick={() => onSelectDub && onSelectDub(dub)}
+                      className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+                        isSelected
+                          ? 'bg-[#E50914] text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      {dub}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
-      )}
 
-      {/* Action Bar Below Player */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-white rounded-2xl border border-slate-200">
-        <div className="flex items-center gap-3">
+        {/* Primary Action Button */}
+        <div className="space-y-2.5">
           <button
             onClick={handleOpenApp}
-            className="min-h-[42px] px-5 py-2 bg-[#E50914] hover:bg-[#C80811] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-colors flex items-center gap-2"
+            className="w-full min-h-[48px] sm:min-h-[52px] px-6 py-3 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg shadow-red-600/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           >
-            <Smartphone className="w-4 h-4" />
-            <span>Open in App</span>
+            <Smartphone className="w-5 h-5 shrink-0" />
+            <span>Open in Anime Trix App / অ্যাপে দেখুন</span>
           </button>
 
-          <button
-            onClick={handleShare}
-            className="min-h-[42px] px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center gap-2"
-          >
-            <Share2 className="w-4 h-4" />
-            <span>Share Link</span>
-          </button>
+          {/* Secondary Action Row: Share & Download APK */}
+          <div className="grid grid-cols-2 gap-2.5">
+            <button
+              onClick={handleShare}
+              className="min-h-[42px] px-3 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-1.5"
+            >
+              <Share2 className="w-4 h-4 text-slate-500" />
+              <span>Share Link</span>
+            </button>
+
+            <button
+              onClick={onOpenDownloadModal}
+              className="min-h-[42px] px-3 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-1.5"
+            >
+              <Download className="w-4 h-4 text-[#E50914]" />
+              <span>Download APK</span>
+            </button>
+          </div>
         </div>
 
-        <button
-          onClick={onOpenDownloadModal}
-          className="min-h-[42px] px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 rounded-xl transition-colors flex items-center gap-1.5"
-        >
-          <Download className="w-3.5 h-3.5 text-[#E50914]" />
-          <span>Need the App? Download APK</span>
-        </button>
+        {/* Feature bullets */}
+        <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 border-t border-slate-100">
+          <span className="flex items-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+            1080p Ultra HD Quality
+          </span>
+          <span className="flex items-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+            Zero Buffering Player
+          </span>
+          <span className="flex items-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+            Bangla & Hindi Audio
+          </span>
+        </div>
       </div>
     </div>
   );
