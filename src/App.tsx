@@ -96,7 +96,6 @@ export default function App() {
                   <HomePage
                     animeList={animeList}
                     banners={banners}
-                    latestEpisodes={latestEpisodes}
                     loading={loading}
                     searchQuery={searchQuery}
                     onSearchChange={setSearchQuery}
@@ -129,7 +128,6 @@ export default function App() {
                   <HomePage
                     animeList={animeList}
                     banners={banners}
-                    latestEpisodes={latestEpisodes}
                     loading={loading}
                     searchQuery={searchQuery}
                     onSearchChange={setSearchQuery}

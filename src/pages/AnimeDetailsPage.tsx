@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   Star,
@@ -6,13 +6,14 @@ import {
   Tv,
   Share2,
   Smartphone,
-  Download,
   Calendar,
-  Layers,
   ChevronLeft,
   Loader2,
   Globe,
-  Sparkles,
+  Search,
+  SlidersHorizontal,
+  Layers,
+  X,
 } from 'lucide-react';
 import { Anime, Episode } from '../types';
 import { fetchAnimeById, fetchEpisodesForAnime } from '../lib/firebase';
@@ -35,6 +36,8 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDub, setSelectedDub] = useState<string>('');
+  const [selectedSeason, setSelectedSeason] = useState<number | 'all'>('all');
+  const [episodeSearchQuery, setEpisodeSearchQuery] = useState<string>('');
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -43,7 +46,6 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
       if (!animeId) return;
       setLoading(true);
 
-      // Check if already in memory
       let loadedAnime = allAnime.find((a) => a.id === animeId) || null;
       if (!loadedAnime) {
         loadedAnime = await fetchAnimeById(animeId);
@@ -59,7 +61,6 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
         }
       }
 
-      // Fetch episodes
       const eps = await fetchEpisodesForAnime(animeId);
       if (isMounted) {
         setEpisodes(eps);
@@ -73,6 +74,38 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
       isMounted = false;
     };
   }, [animeId, allAnime]);
+
+  // Extract unique seasons dynamically from episodes list
+  const seasonsList = useMemo(() => {
+    const seasons = new Set<number>();
+    episodes.forEach((ep) => {
+      if (typeof ep.seasonNumber === 'number' && ep.seasonNumber > 0) {
+        seasons.add(ep.seasonNumber);
+      }
+    });
+    return Array.from(seasons).sort((a, b) => a - b);
+  }, [episodes]);
+
+  // Filter episodes based on selected season and search query
+  const filteredEpisodes = useMemo(() => {
+    return episodes.filter((ep) => {
+      // Season filter
+      if (selectedSeason !== 'all') {
+        if (ep.seasonNumber !== selectedSeason) return false;
+      }
+
+      // Search query filter
+      if (episodeSearchQuery.trim()) {
+        const q = episodeSearchQuery.toLowerCase().trim();
+        const epNum = ep.episodeNumber.toString();
+        const numMatch = epNum === q || `episode ${epNum}`.includes(q) || `ep ${epNum}`.includes(q);
+        const titleMatch = ep.title.toLowerCase().includes(q);
+        if (!numMatch && !titleMatch) return false;
+      }
+
+      return true;
+    });
+  }, [episodes, selectedSeason, episodeSearchQuery]);
 
   const handleOpenApp = () => {
     if (!anime) return;
@@ -142,35 +175,35 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
   const relatedAnime = allAnime.filter((a) => a.id !== anime.id).slice(0, 5);
 
   return (
-    <div className="space-y-10 md:space-y-12">
+    <div className="space-y-8 md:space-y-10">
       {/* Breadcrumb Back Link */}
       <div>
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 py-1"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 py-1 transition-colors"
         >
           <ChevronLeft className="w-4 h-4 text-[#E50914]" />
           <span>Back to Catalog</span>
         </Link>
       </div>
 
-      {/* Hero Header with Backdrop */}
-      <section className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-200">
-        <div className="relative aspect-[21/9] sm:aspect-[24/9] max-h-[360px] w-full overflow-hidden">
+      {/* Hero Header with Cinematic Backdrop */}
+      <section className="relative rounded-3xl overflow-hidden bg-slate-950 border border-slate-200 shadow-sm">
+        <div className="relative aspect-[21/9] sm:aspect-[24/9] max-h-[340px] w-full overflow-hidden">
           <img
             src={backdropImage}
             alt={anime.title}
             referrerPolicy="no-referrer"
-            className="w-full h-full object-cover opacity-60"
+            className="w-full h-full object-cover opacity-60 filter blur-[1px]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
         </div>
 
         {/* Content Container Split */}
-        <div className="relative px-6 pb-8 pt-0 sm:px-10 -mt-24 sm:-mt-32">
-          <div className="flex flex-col sm:flex-row items-start gap-6 sm:gap-8">
+        <div className="relative px-4 pb-6 pt-0 sm:px-8 -mt-20 sm:-mt-28">
+          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
             {/* Poster Card */}
-            <div className="w-32 sm:w-48 aspect-[3/4] rounded-2xl overflow-hidden bg-slate-800 shadow-2xl border-2 border-white/20 shrink-0">
+            <div className="w-28 sm:w-44 aspect-[3/4] rounded-2xl overflow-hidden bg-slate-800 shadow-xl border-2 border-white/20 shrink-0">
               <img
                 src={anime.posterUrl || backdropImage}
                 alt={anime.title}
@@ -180,16 +213,16 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
             </div>
 
             {/* Title & Metadata */}
-            <div className="flex-1 space-y-3 sm:space-y-4 text-white">
-              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-300">
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/10 text-white font-medium">
+            <div className="flex-1 space-y-2.5 sm:space-y-3 text-white">
+              <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-300">
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/15 text-white font-medium">
                   {isMovie ? <Film className="w-3 h-3 text-red-400" /> : <Tv className="w-3 h-3 text-red-400" />}
                   {anime.contentType || 'TV Series'}
                 </span>
 
                 {anime.releaseYear && (
                   <>
-                    <span aria-hidden="true">·</span>
+                    <span className="text-slate-500">·</span>
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3 text-slate-400" />
                       {anime.releaseYear}
@@ -199,8 +232,8 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
 
                 {anime.rating && (
                   <>
-                    <span aria-hidden="true">·</span>
-                    <span className="flex items-center gap-1 text-amber-300 font-semibold font-mono tabular-nums">
+                    <span className="text-slate-500">·</span>
+                    <span className="flex items-center gap-1 text-amber-300 font-bold font-mono tabular-nums">
                       <Star className="w-3.5 h-3.5 fill-amber-300" />
                       {anime.rating}
                     </span>
@@ -208,17 +241,17 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 )}
               </div>
 
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">
+              <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
                 {anime.title}
               </h1>
 
               {/* Genre Chips */}
               {anime.genres && anime.genres.length > 0 && (
-                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                   {anime.genres.map((genre) => (
                     <span
                       key={genre}
-                      className="text-xs px-2.5 py-1 bg-white/10 text-slate-200 rounded-lg border border-white/10"
+                      className="text-[11px] px-2 py-0.5 bg-white/10 text-slate-200 rounded-md border border-white/10"
                     >
                       {genre}
                     </span>
@@ -226,29 +259,37 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 </div>
               )}
 
-              {/* Admin Dub Badges strictly from availableDubs */}
+              {/* Admin Dub Badges */}
               {anime.availableDubs && anime.availableDubs.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <span className="text-xs text-slate-400 flex items-center gap-1">
+                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span className="text-xs text-slate-400 flex items-center gap-1 mr-1">
                     <Globe className="w-3.5 h-3.5 text-red-400" />
-                    Available Dubs:
+                    Audio Dub:
                   </span>
-                  {anime.availableDubs.map((dub) => (
-                    <span
-                      key={dub}
-                      className="text-xs font-semibold px-2 py-0.5 bg-red-600/30 text-red-300 border border-red-500/40 rounded-md"
-                    >
-                      {dub}
-                    </span>
-                  ))}
+                  {anime.availableDubs.map((dub) => {
+                    const isSelected = selectedDub === dub;
+                    return (
+                      <button
+                        key={dub}
+                        onClick={() => setSelectedDub(dub)}
+                        className={`text-xs font-semibold px-2.5 py-0.5 rounded-md transition-all ${
+                          isSelected
+                            ? 'bg-[#E50914] text-white shadow-xs'
+                            : 'bg-white/15 text-slate-200 hover:bg-white/25 border border-white/10'
+                        }`}
+                      >
+                        {dub}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
               {/* CTA Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-3">
+              <div className="flex flex-wrap items-center gap-2.5 pt-2">
                 <button
                   onClick={handleOpenApp}
-                  className="min-h-[46px] px-6 py-2.5 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-sm rounded-xl shadow-lg shadow-red-600/30 active:scale-95 transition-all flex items-center gap-2"
+                  className="min-h-[42px] px-5 sm:px-6 py-2 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-red-600/30 active:scale-95 transition-all flex items-center gap-2"
                 >
                   <Smartphone className="w-4 h-4" />
                   <span>Open App / অ্যাপে দেখুন</span>
@@ -256,7 +297,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
 
                 <button
                   onClick={handleShare}
-                  className="min-h-[46px] px-4 py-2.5 bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5"
+                  className="min-h-[42px] px-4 py-2 bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5"
                 >
                   <Share2 className="w-4 h-4" />
                   <span>Share</span>
@@ -267,37 +308,95 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
         </div>
       </section>
 
-      {/* Details / Synopsis Section (clean Details header, no season tabs) */}
-      <section className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-3">
-        <h2 className="text-lg font-bold text-slate-900 tracking-tight">Details</h2>
-        <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">
+      {/* Details / Synopsis Section */}
+      <section className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-7 space-y-2">
+        <h2 className="text-base font-bold text-slate-900 tracking-tight">Details & Synopsis</h2>
+        <p className="text-slate-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
           {anime.description || 'No synopsis available for this title.'}
         </p>
       </section>
 
-      {/* Episode Preview Cards Section (Metadata ONLY — Locked Preview) */}
+      {/* Seasons & Episodes Control Hub (Interactive Season Switcher) */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-              Episodes ({episodes.length})
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <Layers className="w-5 h-5 text-[#E50914]" />
+              <span>Episodes List</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono">
+                {episodes.length}
+              </span>
             </h2>
-            <p className="text-xs text-slate-500">
-              Select an episode to view locked preview or launch directly inside Anime Trix
+            <p className="text-xs text-slate-500 mt-0.5">
+              Select season and tap any episode to open the locked preview player
             </p>
           </div>
 
-          <button
-            onClick={handleOpenApp}
-            className="text-xs font-semibold text-[#E50914] hover:underline flex items-center gap-1"
-          >
-            <span>Play in App</span>
-          </button>
+          {/* Episode Quick Search Input */}
+          {episodes.length > 5 && (
+            <div className="relative w-full sm:w-56">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+              <input
+                type="text"
+                value={episodeSearchQuery}
+                onChange={(e) => setEpisodeSearchQuery(e.target.value)}
+                placeholder="Find episode (e.g. 361)..."
+                className="w-full h-9 pl-9 pr-8 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:bg-white"
+              />
+              {episodeSearchQuery && (
+                <button
+                  onClick={() => setEpisodeSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
-        {episodes.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {episodes.map((ep) => (
+        {/* Season Selector Tabs (Allows changing seasons like Season 16, Season 17, etc.) */}
+        {seasonsList.length > 1 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 border-b border-slate-100">
+            <span className="text-xs font-semibold text-slate-500 mr-1 flex items-center gap-1 shrink-0">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-[#E50914]" />
+              Season:
+            </span>
+
+            <button
+              onClick={() => setSelectedSeason('all')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap transition-all ${
+                selectedSeason === 'all'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              All Episodes ({episodes.length})
+            </button>
+
+            {seasonsList.map((season) => {
+              const countInSeason = episodes.filter((e) => e.seasonNumber === season).length;
+              return (
+                <button
+                  key={season}
+                  onClick={() => setSelectedSeason(season)}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap transition-all ${
+                    selectedSeason === season
+                      ? 'bg-[#E50914] text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  Season {season} ({countInSeason})
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Compact Episode List */}
+        {filteredEpisodes.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+            {filteredEpisodes.map((ep) => (
               <EpisodeCard
                 key={ep.id}
                 episode={ep}
@@ -308,14 +407,17 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
           </div>
         ) : (
           <div className="p-8 text-center bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-            <p className="text-sm font-medium text-slate-700">
-              All episodes are streamed exclusively on the Anime Trix Android App.
+            <p className="text-xs sm:text-sm font-medium text-slate-700">
+              No episodes match your search or filter.
             </p>
             <button
-              onClick={handleOpenApp}
-              className="mt-2 px-4 py-2 bg-[#E50914] text-white text-xs font-semibold rounded-xl"
+              onClick={() => {
+                setSelectedSeason('all');
+                setEpisodeSearchQuery('');
+              }}
+              className="mt-2 px-3 py-1.5 bg-slate-900 text-white text-xs font-semibold rounded-lg"
             >
-              Open Anime in App
+              Reset Filters
             </button>
           </div>
         )}
@@ -323,9 +425,9 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
 
       {/* More Anime & Movies Recommendation Grid */}
       {relatedAnime.length > 0 && (
-        <section className="space-y-4 pt-4 border-t border-slate-200">
+        <section className="space-y-3 pt-4 border-t border-slate-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
               More Anime & Movies
             </h2>
             <Link to="/" className="text-xs font-semibold text-[#E50914] hover:underline">
@@ -333,7 +435,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
             {relatedAnime.map((item) => (
               <AnimeCard key={item.id} anime={item} />
             ))}

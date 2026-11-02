@@ -1,27 +1,25 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
-  Sparkles,
   TrendingUp,
   Tv,
   Film,
   Search,
-  SlidersHorizontal,
   Smartphone,
   Download,
   AlertCircle,
   Loader2,
+  Flame,
+  Clapperboard,
 } from 'lucide-react';
-import { Anime, Episode, Banner, AppSettings } from '../types';
+import { Anime, Banner, AppSettings } from '../types';
 import { HeroSlider } from '../components/HeroSlider';
 import { AnimeCard } from '../components/AnimeCard';
-import { EpisodeCard } from '../components/EpisodeCard';
 import { openInAnimeTrixApp } from '../lib/deepLink';
 
 interface HomePageProps {
   animeList: Anime[];
   banners: Banner[];
-  latestEpisodes: Episode[];
   loading: boolean;
   searchQuery: string;
   onSearchChange: (q: string) => void;
@@ -32,7 +30,6 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({
   animeList,
   banners,
-  latestEpisodes,
   loading,
   searchQuery,
   onSearchChange,
@@ -47,8 +44,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [selectedGenre, setSelectedGenre] = useState<string>('all');
   const [selectedDub, setSelectedDub] = useState<string>('all');
 
-  // Handle query param redirects per prompt specification:
-  // "Query param redirect support: if URL has ?ep=<episodeId>, redirect to /watch/<episodeId> (preserving query params); if ?anime=<animeId>, redirect to /anime/<animeId>."
+  // Handle query param redirects
   useEffect(() => {
     const epParam = searchParams.get('ep');
     const animeParam = searchParams.get('anime');
@@ -59,7 +55,6 @@ export const HomePage: React.FC<HomePageProps> = ({
     }
 
     if (epParam) {
-      // Retain existing params when redirecting
       const targetQuery = searchParams.toString();
       navigate(`/watch/${epParam}?${targetQuery}`, { replace: true });
       return;
@@ -96,7 +91,6 @@ export const HomePage: React.FC<HomePageProps> = ({
   // Filter anime list based on search and filters
   const filteredAnime = useMemo(() => {
     return animeList.filter((anime) => {
-      // Search query check
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const titleMatch = anime.title.toLowerCase().includes(q);
@@ -108,19 +102,16 @@ export const HomePage: React.FC<HomePageProps> = ({
         }
       }
 
-      // Content Type check
       if (selectedType !== 'all') {
         const isMovie = anime.contentType?.toLowerCase().includes('movie');
         if (selectedType === 'Movie' && !isMovie) return false;
         if (selectedType === 'TV Series' && isMovie) return false;
       }
 
-      // Genre check
       if (selectedGenre !== 'all') {
         if (!anime.genres?.includes(selectedGenre)) return false;
       }
 
-      // Dub check
       if (selectedDub !== 'all') {
         if (!anime.availableDubs?.includes(selectedDub)) return false;
       }
@@ -129,10 +120,10 @@ export const HomePage: React.FC<HomePageProps> = ({
     });
   }, [animeList, searchQuery, selectedType, selectedGenre, selectedDub]);
 
-  // Trending anime (either marked trending or high rating)
+  // Trending anime
   const trendingAnime = useMemo(() => {
     return animeList
-      .filter((a) => a.trending || (typeof a.rating === 'number' && a.rating >= 8) || (typeof a.rating === 'string' && parseFloat(a.rating) >= 8))
+      .filter((a) => a.trending || (typeof a.rating === 'number' && a.rating >= 8) || (typeof a.rating === 'string' && parseFloat(a.rating) >= 4.0))
       .slice(0, 8);
   }, [animeList]);
 
@@ -141,26 +132,31 @@ export const HomePage: React.FC<HomePageProps> = ({
     return animeList.filter((a) => a.contentType?.toLowerCase().includes('movie')).slice(0, 8);
   }, [animeList]);
 
+  // Series
+  const tvSeriesAnime = useMemo(() => {
+    return animeList.filter((a) => !a.contentType?.toLowerCase().includes('movie')).slice(0, 8);
+  }, [animeList]);
+
   const appMockupImage = '/src/assets/images/app_mockup_preview_1793556528972.jpg';
 
   return (
-    <div className="space-y-10 md:space-y-12">
+    <div className="space-y-8 md:space-y-10">
       {/* System Notice if present in appConfig/settings */}
       {appSettings.systemNotice?.enabled && appSettings.systemNotice.message && (
-        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-sm flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex items-start gap-2.5">
+          <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <div>
             {appSettings.systemNotice.title && (
               <p className="font-semibold">{appSettings.systemNotice.title}</p>
             )}
-            <p className="text-amber-800 text-xs sm:text-sm mt-0.5 leading-relaxed">
+            <p className="text-amber-800 text-xs mt-0.5 leading-relaxed">
               {appSettings.systemNotice.message}
             </p>
           </div>
         </div>
       )}
 
-      {/* Featured Hero Banner Carousel (hidden when actively searching) */}
+      {/* Featured Hero Banner Carousel */}
       {!searchQuery && (
         <HeroSlider
           banners={banners}
@@ -169,14 +165,14 @@ export const HomePage: React.FC<HomePageProps> = ({
         />
       )}
 
-      {/* Filter and Categorization Bar (Clean Segmented Functional Buttons) */}
-      <section aria-label="Catalog filters" className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+      {/* Filter and Categorization Bar */}
+      <section aria-label="Catalog filters" className="space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-100 pb-2.5">
           {/* Content Type Tabs */}
           <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl shrink-0 self-start">
             <button
               onClick={() => setSelectedType('all')}
-              className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 selectedType === 'all'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -186,18 +182,18 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
             <button
               onClick={() => setSelectedType('TV Series')}
-              className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
                 selectedType === 'TV Series'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Tv className="w-3.5 h-3.5 text-[#E50914]" />
-              <span>TV Series</span>
+              <span>Series</span>
             </button>
             <button
               onClick={() => setSelectedType('Movie')}
-              className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
                 selectedType === 'Movie'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -208,10 +204,10 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
           </div>
 
-          {/* Dub selector chip row if available */}
+          {/* Dub selector chip row */}
           {allDubs.length > 0 && (
             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-              <span className="text-[11px] font-medium text-slate-400 whitespace-nowrap mr-1">Dub:</span>
+              <span className="text-[11px] font-medium text-slate-400 whitespace-nowrap mr-0.5">Dub:</span>
               <button
                 onClick={() => setSelectedDub('all')}
                 className={`px-2.5 py-1 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
@@ -244,7 +240,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
             <button
               onClick={() => setSelectedGenre('all')}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
+              className={`px-3 py-1 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
                 selectedGenre === 'all'
                   ? 'bg-slate-900 text-white'
                   : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300'
@@ -256,7 +252,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               <button
                 key={genre}
                 onClick={() => setSelectedGenre(genre)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
+                className={`px-3 py-1 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
                   selectedGenre === genre
                     ? 'bg-slate-900 text-white'
                     : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300'
@@ -269,17 +265,17 @@ export const HomePage: React.FC<HomePageProps> = ({
         )}
       </section>
 
-      {/* Main Content Area */}
+      {/* Main Content Grid Area */}
       {loading ? (
         <div className="py-20 flex flex-col items-center justify-center text-center space-y-3">
           <Loader2 className="w-8 h-8 text-[#E50914] animate-spin" />
-          <p className="text-sm font-medium text-slate-600">Connecting to Anime Trix Firestore...</p>
+          <p className="text-sm font-medium text-slate-600">Connecting to Anime Trix...</p>
         </div>
       ) : searchQuery || selectedGenre !== 'all' || selectedDub !== 'all' || selectedType !== 'all' ? (
         /* Filtered / Search Results Section */
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900">
               {searchQuery ? `Search Results for "${searchQuery}"` : 'Filtered Anime'}
             </h2>
             <span className="text-xs text-slate-500 font-mono tabular-nums">
@@ -288,7 +284,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           {filteredAnime.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5">
               {filteredAnime.map((anime) => (
                 <AnimeCard key={anime.id} anime={anime} />
               ))}
@@ -315,24 +311,25 @@ export const HomePage: React.FC<HomePageProps> = ({
           )}
         </section>
       ) : (
-        /* Default Homepage Layout with Curated Rows */
-        <div className="space-y-12">
+        /* Default Homepage Layout (Anime cards ONLY — No big episodes on homepage) */
+        <div className="space-y-10">
           {/* Trending Series Section */}
           {trendingAnime.length > 0 && (
-            <section className="space-y-4">
+            <section className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-red-100 text-[#E50914] rounded-lg">
-                    <TrendingUp className="w-4 h-4" />
+                  <div className="p-1 bg-red-100 text-[#E50914] rounded-lg">
+                    <Flame className="w-4 h-4" />
                   </div>
-                  <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                     Trending in Anime Trix
                   </h2>
                 </div>
-                <span className="text-xs text-slate-400">Top Popular</span>
+                <span className="text-xs text-slate-400">Popular</span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+              {/* Clean 2-column on mobile, 4-column on tablet/desktop */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-5">
                 {trendingAnime.slice(0, 4).map((anime) => (
                   <AnimeCard key={anime.id} anime={anime} />
                 ))}
@@ -340,92 +337,105 @@ export const HomePage: React.FC<HomePageProps> = ({
             </section>
           )}
 
-          {/* Latest Episodes Preview Section (METADATA ONLY) */}
-          {latestEpisodes.length > 0 && (
-            <section className="space-y-4">
+          {/* Popular TV Series */}
+          {tvSeriesAnime.length > 0 && (
+            <section className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-red-100 text-[#E50914] rounded-lg">
+                  <div className="p-1 bg-red-100 text-[#E50914] rounded-lg">
                     <Tv className="w-4 h-4" />
                   </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-                      Latest Episode Previews
-                    </h2>
-                    <p className="text-xs text-slate-500">
-                      Tap any episode to open the locked preview or launch in the Android app
-                    </p>
-                  </div>
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                    Popular Anime Series
+                  </h2>
                 </div>
+                <span className="text-xs text-slate-400">TV Shows</span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                {latestEpisodes.slice(0, 6).map((ep) => (
-                  <EpisodeCard key={ep.id} episode={ep} />
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-5">
+                {tvSeriesAnime.map((anime) => (
+                  <AnimeCard key={anime.id} anime={anime} />
                 ))}
               </div>
             </section>
           )}
 
-          {/* All Catalog Grid */}
-          <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-                All Anime & Movies
-              </h2>
-              <span className="text-xs text-slate-500 font-mono tabular-nums">
-                {animeList.length} items
-              </span>
-            </div>
+          {/* Anime Movies (if available) */}
+          {movieAnime.length > 0 && (
+            <section className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-1 bg-red-100 text-[#E50914] rounded-lg">
+                    <Clapperboard className="w-4 h-4" />
+                  </div>
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                    Anime Movies
+                  </h2>
+                </div>
+                <span className="text-xs text-slate-400">Feature Films</span>
+              </div>
 
-            {animeList.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-5">
+                {movieAnime.map((anime) => (
+                  <AnimeCard key={anime.id} anime={anime} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* All Catalog Grid (if more titles exist) */}
+          {animeList.length > 4 && (
+            <section className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                  All Catalog
+                </h2>
+                <span className="text-xs text-slate-500 font-mono tabular-nums">
+                  {animeList.length} titles
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5">
                 {animeList.map((anime) => (
                   <AnimeCard key={anime.id} anime={anime} />
                 ))}
               </div>
-            ) : (
-              <div className="py-12 text-center bg-slate-50 rounded-2xl border border-slate-200">
-                <p className="text-sm text-slate-500">
-                  Catalog is loading from Anime Trix Firestore...
-                </p>
-              </div>
-            )}
-          </section>
+            </section>
+          )}
 
           {/* Android App Showcase Card */}
-          <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white rounded-3xl border border-slate-700/60 p-6 sm:p-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-7 space-y-4 text-left">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full text-xs font-semibold">
+          <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white rounded-3xl border border-slate-700/60 p-5 sm:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <div className="md:col-span-7 space-y-3 text-left">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full text-xs font-semibold">
                   <Smartphone className="w-3.5 h-3.5" />
-                  <span>Anime Trix for Android</span>
+                  <span>Anime Trix Android App</span>
                 </div>
 
-                <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-snug">
-                  Watch Full Episodes in HD Exclusively in the Android App
+                <h3 className="text-xl sm:text-2xl font-extrabold tracking-tight leading-snug">
+                  Watch Full HD Episodes in the Official App
                 </h3>
 
-                <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
-                  Shared links from WhatsApp, Messenger, or Telegram automatically launch inside Anime Trix without opening a web browser. Enjoy high bitrate 1080p video, Bangla Dub, Hindi Dub, and multi-subtitles with zero buffer.
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  Fast 1080p streaming with Bangla Dub, Hindi Dub, and multi-subtitles with zero buffer.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-3 pt-2">
+                <div className="flex flex-wrap items-center gap-2.5 pt-1">
                   <button
                     onClick={() => {
                       openInAnimeTrixApp({
                         onNonAndroid: () => onOpenDownloadModal(),
                       });
                     }}
-                    className="min-h-[44px] px-6 py-2.5 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-sm rounded-xl shadow-lg shadow-red-600/30 active:scale-95 transition-all flex items-center gap-2"
+                    className="min-h-[40px] px-5 py-2 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/30 active:scale-95 transition-all flex items-center gap-1.5"
                   >
                     <Smartphone className="w-4 h-4" />
-                    <span>Open Anime Trix App</span>
+                    <span>Open App</span>
                   </button>
 
                   <button
                     onClick={onOpenDownloadModal}
-                    className="min-h-[44px] px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm rounded-xl transition-colors flex items-center gap-2"
+                    className="min-h-[40px] px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs rounded-xl transition-colors flex items-center gap-1.5"
                   >
                     <Download className="w-4 h-4" />
                     <span>Download APK</span>
@@ -434,19 +444,14 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
 
               {/* Showcase App Mockup Visual */}
-              <div className="lg:col-span-5 flex justify-center">
-                <div className="relative w-full max-w-xs aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/20">
+              <div className="md:col-span-5 flex justify-center">
+                <div className="relative w-full max-w-[220px] aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/20">
                   <img
                     src={appMockupImage}
                     alt="Anime Trix Android App Interface"
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
-                    <p className="text-xs font-semibold text-white">
-                      Fast 1-Tap App Deep Linking
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
