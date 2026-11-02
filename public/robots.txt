@@ -2,4 +2,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://animetrix-nwaz.onrender.com/sitemap.xml
-Sitemap: https://anime-trix-5.onrender.com/sitemap.xml
