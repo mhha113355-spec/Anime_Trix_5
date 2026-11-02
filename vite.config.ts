@@ -1,6 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import fs from 'fs';
 import {defineConfig} from 'vite';
 
 const HARDCODED_PACKAGE_NAME = 'com.aistudio.animetrix.vxrpl';
@@ -128,9 +129,50 @@ function dynamicAssetLinksPlugin() {
   };
 }
 
+function apkDownloadPlugin() {
+  const handler = (req: any, res: any, next: any) => {
+    const rawUrl = decodeURIComponent(req.url || '').split('?')[0];
+    if (
+      rawUrl === '/AnimeTrix.apk' ||
+      rawUrl === '/AnimeTrix (10).apk' ||
+      rawUrl === '/download/AnimeTrix.apk' ||
+      rawUrl === '/app/AnimeTrix.apk'
+    ) {
+      const candidates = [
+        path.resolve(__dirname, 'public/AnimeTrix.apk'),
+        path.resolve(__dirname, 'public/AnimeTrix (10).apk'),
+        path.resolve(__dirname, 'dist/AnimeTrix.apk'),
+        path.resolve(__dirname, 'dist/AnimeTrix (10).apk'),
+      ];
+      const foundPath = candidates.find((p) => fs.existsSync(p));
+      if (foundPath) {
+        const stat = fs.statSync(foundPath);
+        res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+        res.setHeader('Content-Disposition', 'attachment; filename="AnimeTrix.apk"');
+        res.setHeader('Content-Length', stat.size);
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.statusCode = 200;
+        fs.createReadStream(foundPath).pipe(res);
+        return;
+      }
+    }
+    next();
+  };
+
+  return {
+    name: 'apk-download-plugin',
+    configureServer(server: any) {
+      server.middlewares.use(handler);
+    },
+    configurePreviewServer(server: any) {
+      server.middlewares.use(handler);
+    },
+  };
+}
+
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), dynamicAssetLinksPlugin()],
+    plugins: [react(), tailwindcss(), dynamicAssetLinksPlugin(), apkDownloadPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
