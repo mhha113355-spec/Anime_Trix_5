@@ -32,18 +32,16 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Use Firestore apkDownloadUrl or standard download endpoint
+  // Priority: 1. Firestore appConfig/settings.apkDownloadUrl, 2. Direct hosted /AnimeTrix.apk
   const downloadUrl =
     appSettings.apkDownloadUrl ||
-    `https://github.com/mhha113355/anime-trix/releases/latest/download/AnimeTrix.apk`;
+    '/AnimeTrix.apk';
 
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
-    downloadUrl
+    typeof window !== 'undefined' && downloadUrl.startsWith('/')
+      ? `${window.location.origin}${downloadUrl}`
+      : downloadUrl
   )}&color=0f172a&bgcolor=ffffff`;
-
-  const handleDownload = () => {
-    window.open(downloadUrl, '_blank', 'noopener,noreferrer');
-  };
 
   return (
     <div
@@ -150,15 +148,18 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
 
           {/* Primary Action Button */}
           <div className="space-y-2.5">
-            <button
-              onClick={handleDownload}
-              className="w-full min-h-[50px] px-6 py-3 bg-[#E50914] hover:bg-[#C80811] text-white font-semibold text-sm rounded-xl shadow-lg shadow-red-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            <a
+              href={downloadUrl}
+              download="AnimeTrix.apk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full min-h-[50px] px-6 py-3 bg-[#E50914] hover:bg-[#C80811] text-white font-semibold text-sm rounded-xl shadow-lg shadow-red-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-center"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-4 h-4 shrink-0" />
               <span>Download Anime Trix APK (Android)</span>
-            </button>
+            </a>
             <p className="text-center text-[11px] text-slate-500">
-              Compatible with Android 7.0 and above.
+              Direct APK installer • Saves directly to phone Downloads
             </p>
           </div>
         </div>
