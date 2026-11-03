@@ -120,7 +120,11 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
 
     if (navigator.share) {
       try {
-        await navigator.share({ url });
+        await navigator.share({
+          title: 'Anime Trix-Web App',
+          text: `${anime.title} - Anime Trix-এ বাংলা ও হিন্দি ডাবিংয়ে ফুল এইচডিতে দেখুন`,
+          url,
+        });
         showToast('Clean link shared successfully!');
         return;
       } catch (e) {

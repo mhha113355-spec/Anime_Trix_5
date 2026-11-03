@@ -52,7 +52,11 @@ export const LockedVideoPlayer: React.FC<LockedVideoPlayerProps> = ({
 
     if (navigator.share) {
       try {
-        await navigator.share({ url });
+        await navigator.share({
+          title: 'Anime Trix-Web App',
+          text: `${episode.title} - Anime Trix-এ বাংলা ও হিন্দি ডাবিংয়ে ফুল এইচডিতে দেখুন`,
+          url,
+        });
         showToast('Clean link shared successfully!');
         return;
       } catch (err) {
