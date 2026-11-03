@@ -132,25 +132,23 @@ function dynamicAssetLinksPlugin() {
 function apkDownloadPlugin() {
   const handler = (req: any, res: any, next: any) => {
     const rawUrl = decodeURIComponent(req.url || '').split('?')[0];
-    if (
-      rawUrl === '/AnimeTrix.apk' ||
-      rawUrl === '/AnimeTrix (10).apk' ||
-      rawUrl === '/download/AnimeTrix.apk' ||
-      rawUrl === '/app/AnimeTrix.apk'
-    ) {
+    if (rawUrl.endsWith('.apk') || rawUrl.includes('/AnimeTrix')) {
       const candidates = [
-        path.resolve(__dirname, 'public/AnimeTrix.apk'),
         path.resolve(__dirname, 'public/AnimeTrix (10).apk'),
-        path.resolve(__dirname, 'dist/AnimeTrix.apk'),
+        path.resolve(__dirname, 'public/AnimeTrix.apk'),
+        path.resolve(__dirname, 'public/AnimeTrix (18).apk'),
         path.resolve(__dirname, 'dist/AnimeTrix (10).apk'),
+        path.resolve(__dirname, 'dist/AnimeTrix.apk'),
       ];
-      const foundPath = candidates.find((p) => fs.existsSync(p));
+      const foundPath = candidates.find((p) => fs.existsSync(p) && fs.statSync(p).size > 100000);
       if (foundPath) {
         const stat = fs.statSync(foundPath);
         res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-        res.setHeader('Content-Disposition', 'attachment; filename="AnimeTrix.apk"');
+        res.setHeader('Content-Disposition', 'attachment; filename="AnimeTrix (10).apk"');
         res.setHeader('Content-Length', stat.size);
-        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
         res.statusCode = 200;
         fs.createReadStream(foundPath).pipe(res);
         return;
