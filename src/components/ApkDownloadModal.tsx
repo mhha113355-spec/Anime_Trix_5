@@ -41,7 +41,7 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
 
   const downloadUrl =
     appSettings.apkDownloadUrl ||
-    '/AnimeTrix.apk';
+    '/AnimeTrix (18).apk';
 
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
     typeof window !== 'undefined' && downloadUrl.startsWith('/')
@@ -76,7 +76,7 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
             </div>
             <div>
               <h2 id="modal-title" className="text-xl font-black tracking-tight leading-tight">
-                Anime Trix for Android
+                Anime Trix for Android (v18)
               </h2>
               <p className="text-xs text-red-100 mt-0.5">
                 Official high-speed anime streaming installer
@@ -100,12 +100,12 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
               <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
               <div className="text-left">
                 <p className="text-xs font-bold text-slate-900">Safe & Verified</p>
-                <p className="text-[10px] text-slate-500">Official Build</p>
+                <p className="text-[10px] text-slate-500">Official Build v18</p>
               </div>
             </div>
           </div>
 
-          {/* Desktop QR Scan Section (Package name removed) */}
+          {/* Desktop QR Scan Section */}
           <div className="hidden sm:flex items-center gap-4 p-4 bg-slate-50 border border-slate-200/80 rounded-2xl">
             <div className="w-24 h-24 bg-white p-1 rounded-2xl shadow-xs border border-slate-200 shrink-0 flex items-center justify-center">
               <img
@@ -121,7 +121,7 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
                 <span>Scan with your Android phone</span>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Point your phone camera to download the APK installer directly onto your device.
+                Point your phone camera to download the APK installer (v18) directly onto your device.
               </p>
             </div>
           </div>
@@ -130,16 +130,16 @@ export const ApkDownloadModal: React.FC<ApkDownloadModalProps> = ({
           <div className="space-y-2.5">
             <a
               href={downloadUrl}
-              download="AnimeTrix.apk"
+              download="AnimeTrix (18).apk"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full min-h-[50px] px-6 py-3 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-sm rounded-full shadow-lg shadow-red-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-center"
             >
               <Download className="w-4 h-4 shrink-0" />
-              <span>Download Anime Trix APK (9.8 MB)</span>
+              <span>Download AnimeTrix (18).apk</span>
             </a>
             <p className="text-center text-[11px] text-slate-500">
-              Direct APK installer • Saves directly to phone Downloads
+              Direct APK installer v18 • Saves directly to phone Downloads
             </p>
           </div>
         </div>
