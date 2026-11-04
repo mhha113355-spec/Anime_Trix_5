@@ -43,7 +43,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
             b.backdropUrl ||
             matchingAnime?.backdropUrl ||
             matchingAnime?.posterUrl ||
-            '/src/assets/images/hero_anime_showcase_1793556529783.jpg',
+            '/assets/images/hero_anime_showcase_1793556529783.jpg',
           animeId: b.animeId || matchingAnime?.id,
           episodeId: b.episodeId,
           rating: matchingAnime?.rating || '4.9',
@@ -58,7 +58,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
         id: a.id,
         title: a.title,
         description: a.description || 'Watch full episodes in 1080p HD with Bangla & Hindi dub in the official Anime Trix app.',
-        imageUrl: a.backdropUrl || a.posterUrl || '/src/assets/images/hero_anime_showcase_1793556529783.jpg',
+        imageUrl: a.backdropUrl || a.posterUrl || '/assets/images/hero_anime_showcase_1793556529783.jpg',
         animeId: a.id,
         rating: a.rating || '4.9',
         genres: a.genres || ['Action', 'Adventure'],
@@ -71,7 +71,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
         id: 'default',
         title: 'Anime Trix Official Streaming',
         description: 'Watch your favorite anime in Bangla, Hindi & English Dub on Android.',
-        imageUrl: '/src/assets/images/hero_anime_showcase_1793556529783.jpg',
+        imageUrl: '/assets/images/hero_anime_showcase_1793556529783.jpg',
         rating: '4.9',
         genres: ['Action', 'Adventure'],
         dubs: ['Bengali Dub'],

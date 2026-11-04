@@ -16,7 +16,7 @@ export const EpisodeCard: React.FC<EpisodeCardProps> = ({
 }) => {
   const [imageError, setImageError] = useState(false);
 
-  const fallbackThumbnail = animePoster || '/src/assets/images/hero_anime_showcase_1793556529783.jpg';
+  const fallbackThumbnail = animePoster || '/assets/images/hero_anime_showcase_1793556529783.jpg';
   const displayImage = !imageError && episode.thumbnailUrl ? episode.thumbnailUrl : fallbackThumbnail;
 
   const targetUrl = `/watch/${episode.id}?anime=${encodeURIComponent(

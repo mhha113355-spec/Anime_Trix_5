@@ -670,6 +670,10 @@ async function startServer() {
   };
   app.get("/reset-password", resetPasswordBridgeHandler);
   app.get("/__/auth/action", resetPasswordBridgeHandler);
+  const publicPath = path.resolve(__dirname, "public");
+  if (fs.existsSync(publicPath)) {
+    app.use(express.static(publicPath));
+  }
   const distPath = path.resolve(__dirname, "dist");
   if (isProduction && fs.existsSync(distPath)) {
     console.log("[Server] Serving production static files from dist/");

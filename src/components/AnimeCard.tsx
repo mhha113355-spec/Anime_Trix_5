@@ -10,7 +10,7 @@ interface AnimeCardProps {
 export const AnimeCard: React.FC<AnimeCardProps> = ({ anime }) => {
   const [imageError, setImageError] = useState(false);
 
-  const fallbackImage = '/src/assets/images/hero_anime_showcase_1793556529783.jpg';
+  const fallbackImage = '/assets/images/hero_anime_showcase_1793556529783.jpg';
   const displayImage = !imageError && anime.posterUrl ? anime.posterUrl : (anime.backdropUrl || fallbackImage);
 
   const ratingDisplay = anime.rating ? String(anime.rating) : null;

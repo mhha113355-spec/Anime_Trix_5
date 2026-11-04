@@ -30,7 +30,7 @@ export const LockedVideoPlayer: React.FC<LockedVideoPlayerProps> = ({
   const [imageError, setImageError] = useState(false);
   const { showToast } = useToast();
 
-  const fallbackImage = '/src/assets/images/hero_anime_showcase_1793556529783.jpg';
+  const fallbackImage = '/assets/images/hero_anime_showcase_1793556529783.jpg';
   const displayImage =
     !imageError && episode.thumbnailUrl
       ? episode.thumbnailUrl

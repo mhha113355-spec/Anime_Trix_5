@@ -167,7 +167,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
     );
   }
 
-  const fallbackBackdrop = '/src/assets/images/hero_anime_showcase_1793556529783.jpg';
+  const fallbackBackdrop = '/assets/images/hero_anime_showcase_1793556529783.jpg';
   const backdropImage = anime.backdropUrl || anime.posterUrl || fallbackBackdrop;
   const isMovie = anime.contentType?.toLowerCase().includes('movie');
 

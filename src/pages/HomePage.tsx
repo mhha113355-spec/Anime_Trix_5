@@ -129,7 +129,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     return animeList.filter((a) => !a.contentType?.toLowerCase().includes('movie')).slice(0, 8);
   }, [animeList]);
 
-  const appMockupImage = '/src/assets/images/app_mockup_preview_1793556528972.jpg';
+  const appMockupImage = '/assets/images/app_mockup_preview_1793556528972.jpg';
 
   return (
     <div className="space-y-8 md:space-y-12">
