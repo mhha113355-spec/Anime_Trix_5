@@ -192,9 +192,42 @@ function securityHeadersPlugin() {
   };
 }
 
+function authActionSpaFallbackPlugin() {
+  const handler = (req: any, _res: any, next: any) => {
+    const rawUrl = (req.url || '').split('?')[0];
+    if (
+      rawUrl === '/__/auth/action' ||
+      rawUrl === '/__/auth/action/' ||
+      rawUrl === '/reset-password' ||
+      rawUrl === '/reset-password/'
+    ) {
+      const queryPart = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+      req.url = '/index.html' + queryPart;
+    }
+    next();
+  };
+
+  return {
+    name: 'auth-action-spa-fallback-plugin',
+    configureServer(server: any) {
+      server.middlewares.use(handler);
+    },
+    configurePreviewServer(server: any) {
+      server.middlewares.use(handler);
+    },
+  };
+}
+
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), dynamicAssetLinksPlugin(), apkDownloadPlugin(), securityHeadersPlugin()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      dynamicAssetLinksPlugin(),
+      apkDownloadPlugin(),
+      securityHeadersPlugin(),
+      authActionSpaFallbackPlugin(),
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

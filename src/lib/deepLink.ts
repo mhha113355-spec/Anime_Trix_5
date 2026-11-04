@@ -80,3 +80,80 @@ export function openInAnimeTrixApp(params: OpenAppParams): void {
     }
   }
 }
+
+export interface ResetPasswordDeepLinkParams {
+  oobCode: string;
+  email?: string;
+  lang?: string;
+  mode?: string;
+}
+
+/**
+ * Trigger deep link handoff directly to Anime Trix Android App password reset screen
+ */
+export function openResetPasswordInApp(params: ResetPasswordDeepLinkParams): void {
+  if (typeof window === 'undefined') return;
+
+  const mode = params.mode || 'resetPassword';
+  const oobCode = params.oobCode;
+  const email = params.email || '';
+  const lang = params.lang || 'en';
+
+  const queryPart = `mode=${encodeURIComponent(mode)}&oobCode=${encodeURIComponent(oobCode)}&email=${encodeURIComponent(email)}&lang=${encodeURIComponent(lang)}`;
+  const customSchemeUrl = `${APP_SCHEME}://reset-password?${queryPart}`;
+
+  const currentHref = window.location.href;
+  const fallbackUrl = encodeURIComponent(currentHref);
+  const intentUrl = `intent://reset-password?${queryPart}#Intent;scheme=${APP_SCHEME};package=${ANDROID_PACKAGE_NAME};S.browser_fallback_url=${fallbackUrl};end`;
+
+  const isAndroid = isAndroidDevice();
+
+  if (isAndroid) {
+    // Try Android Chrome Intent first for seamless app launching
+    window.location.href = intentUrl;
+
+    // Fast fallback to custom scheme in case the intent is handled differently by webview
+    setTimeout(() => {
+      try {
+        window.location.href = customSchemeUrl;
+      } catch (err) {
+        console.warn('Custom scheme launch fallback:', err);
+      }
+    }, 1200);
+  } else {
+    // On desktop / non-android, attempt custom scheme or inform user
+    try {
+      window.location.href = customSchemeUrl;
+    } catch (err) {
+      console.warn('Custom scheme launch error on desktop:', err);
+    }
+  }
+}
+
+/**
+ * Launch Anime Trix Android App login screen after password reset
+ */
+export function openLoginInApp(email?: string): void {
+  if (typeof window === 'undefined') return;
+
+  const queryPart = email ? `?email=${encodeURIComponent(email)}` : '';
+  const customSchemeUrl = `${APP_SCHEME}://login${queryPart}`;
+  const intentUrl = `intent://login${queryPart}#Intent;scheme=${APP_SCHEME};package=${ANDROID_PACKAGE_NAME};S.browser_fallback_url=${encodeURIComponent(window.location.origin)};end`;
+
+  if (isAndroidDevice()) {
+    window.location.href = intentUrl;
+    setTimeout(() => {
+      try {
+        window.location.href = customSchemeUrl;
+      } catch (e) {
+        console.warn('Scheme login fallback:', e);
+      }
+    }, 1200);
+  } else {
+    try {
+      window.location.href = customSchemeUrl;
+    } catch (e) {
+      console.warn('Desktop scheme login:', e);
+    }
+  }
+}

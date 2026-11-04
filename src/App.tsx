@@ -10,6 +10,7 @@ import { AnimeDetailsPage } from './pages/AnimeDetailsPage';
 import { WatchEpisodePage } from './pages/WatchEpisodePage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsPage } from './pages/TermsPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import {
   fetchAnimeList,
   fetchBanners,
@@ -132,6 +133,9 @@ export default function App() {
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/terms-of-service" element={<TermsPage />} />
+              {/* Firebase Password Reset & Email Action Routes */}
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/__/auth/action" element={<ResetPasswordPage />} />
               <Route
                 path="*"
                 element={

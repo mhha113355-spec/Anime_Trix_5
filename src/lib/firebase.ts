@@ -12,6 +12,11 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
+import {
+  getAuth,
+  verifyPasswordResetCode,
+  confirmPasswordReset,
+} from 'firebase/auth';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 import { Anime, Episode, Banner, AppSettings } from '../types';
 
@@ -29,6 +34,8 @@ export const firebaseConfig = {
 // Initialize Firebase safely
 export const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 export const db = getFirestore(app);
+export const auth = getAuth(app);
+export { verifyPasswordResetCode, confirmPasswordReset };
 
 // Initialize analytics if supported
 if (typeof window !== 'undefined') {
