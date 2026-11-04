@@ -1,0 +1,23 @@
+{
+  "name": "Anime Trix",
+  "short_name": "Anime Trix",
+  "description": "Anime Trix অ্যান্ড্রয়েড অ্যাপের অফিশিয়াল ওয়েব প্ল্যাটফর্ম। জনপ্রিয় সকল অ্যানিমে বাংলা ও হিন্দি ডাবিংয়ে উপভোগ করুন।",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0B0F19",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
