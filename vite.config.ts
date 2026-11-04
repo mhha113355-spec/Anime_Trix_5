@@ -218,11 +218,147 @@ function authActionSpaFallbackPlugin() {
   };
 }
 
+function apiAuthMiddlewarePlugin() {
+  const handler = async (req: any, res: any, next: any) => {
+    const rawUrl = (req.url || '').split('?')[0];
+    if (
+      req.method === 'POST' &&
+      (rawUrl === '/api/auth/forgot-password' || rawUrl === '/api/forgot-password')
+    ) {
+      let body = '';
+      req.on('data', (chunk: any) => {
+        body += chunk;
+      });
+      req.on('end', async () => {
+        try {
+          const parsed = JSON.parse(body || '{}');
+          const email = (parsed.email || '').trim();
+          const lang = parsed.lang || 'bn';
+
+          if (!email || !email.includes('@')) {
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 400;
+            res.end(JSON.stringify({ ok: false, error: 'Please provide a valid email address.' }));
+            return;
+          }
+
+          const { getApps, initializeApp, cert } = await import('firebase-admin/app');
+          const { getAuth } = await import('firebase-admin/auth');
+
+          let rawSa = (
+            process.env.FIREBASE_SERVICE_ACCOUNT ||
+            process.env.FIREBASE_SERVICE_ACCOUNT_KEY ||
+            ''
+          ).trim();
+
+          if (
+            (rawSa.startsWith("'") && rawSa.endsWith("'")) ||
+            (rawSa.startsWith('"') && rawSa.endsWith('"'))
+          ) {
+            rawSa = rawSa.slice(1, -1).trim();
+          }
+
+          let adminApp = getApps()[0];
+          if (!adminApp && rawSa) {
+            let sa = rawSa.startsWith('{')
+              ? JSON.parse(rawSa)
+              : JSON.parse(Buffer.from(rawSa, 'base64').toString('utf-8'));
+            if (sa.private_key) sa.private_key = sa.private_key.replace(/\\n/g, '\n');
+            adminApp = initializeApp({ credential: cert(sa) });
+          }
+
+          if (!adminApp) {
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 500;
+            res.end(
+              JSON.stringify({
+                ok: false,
+                error: 'Firebase Admin not configured on server (FIREBASE_SERVICE_ACCOUNT missing).',
+              })
+            );
+            return;
+          }
+
+          const link = await getAuth(adminApp).generatePasswordResetLink(email);
+          const oobCode = new URL(link).searchParams.get('oobCode') || '';
+          const resetUrl = `https://animetrix-nwaz.onrender.com/reset-password?mode=resetPassword&oobCode=${encodeURIComponent(
+            oobCode
+          )}&email=${encodeURIComponent(email)}&lang=${encodeURIComponent(lang)}`;
+
+          const brevoKey = (process.env.BREVO_API_KEY || '').trim();
+          const senderEmail =
+            (process.env.BREVO_SENDER_EMAIL || '').trim() ||
+            'support@animetrix-nwaz.onrender.com';
+
+          if (!brevoKey) {
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 500;
+            res.end(
+              JSON.stringify({
+                ok: false,
+                error: 'BREVO_API_KEY is missing on server.',
+                ...(process.env.NODE_ENV !== 'production' ? { devResetUrl: resetUrl } : {}),
+              })
+            );
+            return;
+          }
+
+          const htmlContent = `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:28px;border:1px solid #eee;border-radius:16px;background:#fff;text-align:center;"><h2 style="color:#111;margin-bottom:6px;">Anime <span style="color:#E50914;">Trix</span></h2><p style="color:#555;font-size:14px;">Password reset request for <b>${email}</b></p><a href="${resetUrl}" style="display:inline-block;margin:20px 0;padding:14px 28px;background:#E50914;color:#fff;text-decoration:none;font-weight:bold;border-radius:10px;font-size:15px;">Reset Password</a><p style="color:#888;font-size:12px;">Tap the button above on your Android phone to set your new password directly inside the Anime Trix app.</p></div>`;
+
+          const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+              accept: 'application/json',
+              'content-type': 'application/json',
+              'api-key': brevoKey,
+            },
+            body: JSON.stringify({
+              sender: { name: 'Anime Trix', email: senderEmail },
+              to: [{ email }],
+              subject: 'Anime Trix - Reset Your Password',
+              htmlContent,
+            }),
+          });
+
+          if (!brevoRes.ok) {
+            const errTxt = await brevoRes.text();
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 500;
+            res.end(JSON.stringify({ ok: false, error: errTxt }));
+            return;
+          }
+
+          res.setHeader('Content-Type', 'application/json');
+          res.statusCode = 200;
+          res.end(JSON.stringify({ ok: true, success: true }));
+        } catch (e: any) {
+          res.setHeader('Content-Type', 'application/json');
+          res.statusCode = 500;
+          res.end(JSON.stringify({ ok: false, error: e?.message || 'Server error' }));
+        }
+      });
+      return;
+    }
+    next();
+  };
+
+  return {
+    name: 'api-auth-middleware-plugin',
+    configureServer(server: any) {
+      server.middlewares.use(handler);
+    },
+    configurePreviewServer(server: any) {
+      server.middlewares.use(handler);
+    },
+  };
+}
+
 export default defineConfig(() => {
   return {
     plugins: [
       react(),
       tailwindcss(),
+      apiAuthMiddlewarePlugin(),
       dynamicAssetLinksPlugin(),
       apkDownloadPlugin(),
       securityHeadersPlugin(),
