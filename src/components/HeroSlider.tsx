@@ -111,7 +111,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
   };
 
   return (
-    <div className="relative w-full rounded-[28px] sm:rounded-[36px] overflow-hidden bg-slate-900 border border-slate-200 shadow-sm group">
+    <div className="relative w-full rounded-[28px] sm:rounded-[36px] overflow-hidden bg-slate-900 border border-white/80 shadow-[0_16px_40px_-10px_rgba(15,23,42,0.1),inset_0_1px_1.5px_rgba(255,255,255,0.9)] group">
       {/* 16:10 on mobile, 21:9 on desktop */}
       <div className="relative aspect-[16/10] sm:aspect-[21/9] w-full overflow-hidden">
         {/* Background Banner Image */}
@@ -128,23 +128,23 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
 
         {/* Content Container */}
         <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-7 md:p-9 text-white z-10">
-          {/* Metadata Badges (Clean White UI Style) */}
+          {/* Metadata Badges with Frosted Glass */}
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 text-[11px] sm:text-xs">
             {currentSlide.rating && (
-              <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-amber-300 font-bold font-mono border border-white/15">
+              <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/55 backdrop-blur-md text-amber-300 font-bold font-mono border border-white/20 shadow-xs">
                 <Star className="w-3 h-3 fill-amber-300" />
                 <span>{currentSlide.rating}</span>
               </span>
             )}
 
             {currentSlide.dubs && currentSlide.dubs.length > 0 && (
-              <span className="px-2.5 py-0.5 rounded-full bg-[#E50914] text-white font-bold shadow-xs">
+              <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-red-600 to-[#E50914] text-white font-bold shadow-[0_2px_8px_rgba(229,9,20,0.35),inset_0_1px_1px_rgba(255,255,255,0.35)]">
                 {currentSlide.dubs[0]}
               </span>
             )}
 
             {currentSlide.genres && currentSlide.genres.length > 0 && (
-              <span className="hidden xs:inline-block px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-white font-medium border border-white/15">
+              <span className="hidden xs:inline-block px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-white font-medium border border-white/25 shadow-xs">
                 {currentSlide.genres.slice(0, 2).join(', ')}
               </span>
             )}
@@ -164,7 +164,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={handleLaunchApp}
-              className="min-h-[40px] sm:min-h-[46px] px-6 sm:px-8 py-2 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs sm:text-sm rounded-full shadow-lg shadow-red-500/30 active:scale-95 transition-all flex items-center gap-2 shrink-0"
+              className="min-h-[40px] sm:min-h-[46px] px-6 sm:px-8 py-2 bg-gradient-to-r from-red-600 to-[#E50914] hover:brightness-105 text-white font-bold text-xs sm:text-sm rounded-full shadow-[0_8px_24px_rgba(229,9,20,0.4),inset_0_1px_1px_rgba(255,255,255,0.4)] active:scale-95 transition-all flex items-center gap-2 shrink-0"
             >
               <Smartphone className="w-4 h-4" />
               <span>Open App</span>
@@ -173,7 +173,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
             {currentSlide.animeId && (
               <Link
                 to={`/anime/${currentSlide.animeId}`}
-                className="min-h-[40px] sm:min-h-[46px] px-5 sm:px-6 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white font-semibold text-xs sm:text-sm rounded-full transition-all flex items-center gap-1.5 shrink-0 active:scale-95"
+                className="min-h-[40px] sm:min-h-[46px] px-5 sm:px-6 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-xl border border-white/35 text-white font-semibold text-xs sm:text-sm rounded-full transition-all flex items-center gap-1.5 shrink-0 active:scale-95 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)]"
               >
                 <Info className="w-4 h-4 text-white" />
                 <span>Details</span>

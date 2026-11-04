@@ -32,14 +32,14 @@ export const MobileStickyBanner: React.FC<MobileStickyBannerProps> = ({
       aria-label="Mobile download banner"
       className="md:hidden fixed bottom-3 left-3 right-3 z-40 max-w-md mx-auto"
     >
-      {/* Clean White UI Floating Download Bar */}
-      <div className="flex items-center justify-between gap-2.5 px-3.5 py-2.5 rounded-full bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(15,23,42,0.15)] animate-in slide-in-from-bottom-4 duration-300">
+      {/* Apple iPhone Floating Frosted Glass Capsule */}
+      <div className="flex items-center justify-between gap-2.5 px-3.5 py-2.5 rounded-full bg-white/75 backdrop-blur-3xl border border-white/90 shadow-[0_12px_40px_rgba(15,23,42,0.14),inset_0_1px_1.5px_rgba(255,255,255,1)] animate-in slide-in-from-bottom-4 duration-300">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden p-0.5 shadow-2xs">
+          <div className="w-8 h-8 rounded-full bg-white/80 border border-white/90 flex items-center justify-center shrink-0 overflow-hidden p-0.5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.9)]">
             <img src="/logo.png" alt="Anime Trix" className="w-full h-full object-contain rounded-full" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-bold text-slate-900 truncate">Anime Trix Official App</p>
+            <p className="text-xs font-bold text-slate-900 truncate tracking-tight">Anime Trix Official App</p>
             <p className="text-[10px] text-slate-500 truncate">Free Download (14.8 MB APK)</p>
           </div>
         </div>
@@ -54,7 +54,7 @@ export const MobileStickyBanner: React.FC<MobileStickyBannerProps> = ({
                 onOpenDownloadModal();
               }
             }}
-            className="px-3.5 py-1.5 bg-[#E50914] hover:bg-[#C80811] text-white text-[11px] font-bold rounded-full shadow-[0_2px_12px_rgba(229,9,20,0.35)] active:scale-95 transition-all whitespace-nowrap min-h-[34px] flex items-center gap-1.5 cursor-pointer text-center"
+            className="px-3.5 py-1.5 bg-gradient-to-r from-red-600 to-[#E50914] hover:brightness-110 text-white text-[11px] font-bold rounded-full shadow-[0_4px_16px_rgba(229,9,20,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)] active:scale-95 transition-all whitespace-nowrap min-h-[34px] flex items-center gap-1.5 cursor-pointer text-center"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Download APK</span>

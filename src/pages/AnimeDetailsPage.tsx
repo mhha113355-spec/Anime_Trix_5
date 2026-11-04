@@ -308,10 +308,13 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
         </div>
       </section>
 
-      {/* Details & Synopsis Card (Clean White UI) */}
-      <section className="bg-white rounded-[26px] border border-slate-200 p-5 sm:p-7 space-y-2 shadow-xs">
-        <h2 className="text-base font-bold text-slate-900 tracking-tight">Details & Synopsis</h2>
-        <p className="text-slate-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+      {/* Details & Synopsis Card (Liquid Frosted Glass) */}
+      <section className="glass-panel rounded-[28px] p-5 sm:p-7 space-y-2.5 transition-all">
+        <h2 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <span>Details & Synopsis</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E50914]" />
+        </h2>
+        <p className="text-slate-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line font-normal">
           {anime.description || 'No synopsis available for this title.'}
         </p>
       </section>
@@ -341,7 +344,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 value={episodeSearchQuery}
                 onChange={(e) => setEpisodeSearchQuery(e.target.value)}
                 placeholder="Find episode (e.g. 361)..."
-                className="w-full h-9 pl-9 pr-8 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:bg-white"
+                className="w-full h-9 pl-9 pr-8 glass-input rounded-full text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#E50914]/40 transition-all font-medium"
               />
               {episodeSearchQuery && (
                 <button
@@ -355,9 +358,9 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
           )}
         </div>
 
-        {/* Season Selector Tabs */}
+        {/* Season Selector Tabs (iPhone Frosted Dock) */}
         {seasonsList.length > 1 && (
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 border-b border-slate-200/80">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1.5 px-1">
             <span className="text-xs font-semibold text-slate-500 mr-1 flex items-center gap-1 shrink-0">
               <SlidersHorizontal className="w-3.5 h-3.5 text-[#E50914]" />
               Season:
@@ -367,8 +370,8 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
               onClick={() => setSelectedSeason('all')}
               className={`px-3.5 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap transition-all active:scale-95 ${
                 selectedSeason === 'all'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-slate-900 text-white shadow-[0_4px_14px_rgba(15,23,42,0.25),inset_0_1px_0_rgba(255,255,255,0.2)]'
+                  : 'glass-pill text-slate-700 hover:bg-white/90'
               }`}
             >
               All Episodes ({episodes.length})
@@ -382,8 +385,8 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                   onClick={() => setSelectedSeason(season)}
                   className={`px-3.5 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap transition-all active:scale-95 ${
                     selectedSeason === season
-                      ? 'bg-[#E50914] text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-gradient-to-r from-red-600 to-[#E50914] text-white shadow-[0_4px_14px_rgba(229,9,20,0.35),inset_0_1px_0_rgba(255,255,255,0.4)]'
+                      : 'glass-pill text-slate-700 hover:bg-white/90'
                   }`}
                 >
                   Season {season} ({countInSeason})
@@ -406,7 +409,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center bg-white border border-slate-200 rounded-2xl space-y-2 shadow-xs">
+          <div className="p-8 text-center glass-card rounded-[24px] space-y-2">
             <p className="text-xs sm:text-sm font-medium text-slate-600">
               No episodes match your search or filter.
             </p>
@@ -415,7 +418,7 @@ export const AnimeDetailsPage: React.FC<AnimeDetailsPageProps> = ({
                 setSelectedSeason('all');
                 setEpisodeSearchQuery('');
               }}
-              className="mt-2 px-4 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-full active:scale-95"
+              className="mt-2 px-4 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-full active:scale-95 shadow-sm"
             >
               Reset Filters
             </button>

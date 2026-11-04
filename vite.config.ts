@@ -168,9 +168,33 @@ function apkDownloadPlugin() {
   };
 }
 
+function securityHeadersPlugin() {
+  return {
+    name: 'security-headers-plugin',
+    configureServer(server: any) {
+      server.middlewares.use((_req: any, res: any, next: any) => {
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+        res.setHeader('X-XSS-Protection', '1; mode=block');
+        res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        next();
+      });
+    },
+    configurePreviewServer(server: any) {
+      server.middlewares.use((_req: any, res: any, next: any) => {
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+        res.setHeader('X-XSS-Protection', '1; mode=block');
+        res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        next();
+      });
+    },
+  };
+}
+
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), dynamicAssetLinksPlugin(), apkDownloadPlugin()],
+    plugins: [react(), tailwindcss(), dynamicAssetLinksPlugin(), apkDownloadPlugin(), securityHeadersPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

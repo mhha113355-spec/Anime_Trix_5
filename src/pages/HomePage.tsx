@@ -157,16 +157,16 @@ export const HomePage: React.FC<HomePageProps> = ({
         />
       )}
 
-      {/* Clean White UI Filter Controls */}
+      {/* iPhone Frosted Glass Filter Controls */}
       <section aria-label="Catalog filters" className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/60 pb-3">
           {/* Content Type Segmented Capsule */}
-          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-full border border-slate-200 shrink-0 self-start">
+          <div className="flex items-center gap-1 p-1 bg-white/60 backdrop-blur-2xl rounded-full border border-white/80 shrink-0 self-start shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.9),0_2px_8px_rgba(0,0,0,0.03)]">
             <button
               onClick={() => setSelectedType('all')}
               className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all active:scale-95 ${
                 selectedType === 'all'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-white text-slate-900 shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,1)]'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -176,7 +176,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               onClick={() => setSelectedType('TV Series')}
               className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all flex items-center gap-1 active:scale-95 ${
                 selectedType === 'TV Series'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-white text-slate-900 shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,1)]'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -187,7 +187,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               onClick={() => setSelectedType('Movie')}
               className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all flex items-center gap-1 active:scale-95 ${
                 selectedType === 'Movie'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-white text-slate-900 shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,1)]'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -204,8 +204,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                 onClick={() => setSelectedDub('all')}
                 className={`px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-all active:scale-95 ${
                   selectedDub === 'all'
-                    ? 'bg-slate-900 text-white font-bold'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+                    ? 'bg-slate-900 text-white font-bold shadow-xs'
+                    : 'bg-white/65 hover:bg-white/90 backdrop-blur-xl border border-white/80 text-slate-700 shadow-2xs'
                 }`}
               >
                 All Audio
@@ -216,8 +216,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                   onClick={() => setSelectedDub(dub)}
                   className={`px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-all active:scale-95 ${
                     selectedDub === dub
-                      ? 'bg-[#E50914] text-white font-bold shadow-xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+                      ? 'bg-gradient-to-r from-red-600 to-[#E50914] text-white font-bold shadow-[0_2px_8px_rgba(229,9,20,0.35),inset_0_1px_1px_rgba(255,255,255,0.35)]'
+                      : 'bg-white/65 hover:bg-white/90 backdrop-blur-xl border border-white/80 text-slate-700 shadow-2xs'
                   }`}
                 >
                   {dub}
@@ -234,8 +234,8 @@ export const HomePage: React.FC<HomePageProps> = ({
               onClick={() => setSelectedGenre('all')}
               className={`px-3.5 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-all active:scale-95 ${
                 selectedGenre === 'all'
-                  ? 'bg-slate-900 text-white font-bold'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300'
+                  ? 'bg-slate-900 text-white font-bold shadow-xs'
+                  : 'bg-white/65 hover:bg-white/90 backdrop-blur-xl border border-white/80 text-slate-600 shadow-2xs'
               }`}
             >
               All Genres
@@ -246,8 +246,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                 onClick={() => setSelectedGenre(genre)}
                 className={`px-3.5 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-all active:scale-95 ${
                   selectedGenre === genre
-                    ? 'bg-slate-900 text-white font-bold'
-                    : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300'
+                    ? 'bg-slate-900 text-white font-bold shadow-xs'
+                    : 'bg-white/65 hover:bg-white/90 backdrop-blur-xl border border-white/80 text-slate-600 shadow-2xs'
                 }`}
               >
                 {genre}
@@ -392,11 +392,14 @@ export const HomePage: React.FC<HomePageProps> = ({
             </section>
           )}
 
-          {/* White UI Android App Showcase Card */}
-          <section className="relative overflow-hidden bg-white text-slate-900 rounded-[28px] sm:rounded-[36px] border border-slate-200 shadow-sm p-6 sm:p-9">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          {/* iPhone Liquid Glass App Showcase Card */}
+          <section className="relative overflow-hidden bg-white/70 backdrop-blur-3xl text-slate-900 rounded-[32px] sm:rounded-[40px] border border-white/90 shadow-[inset_0_1px_2px_0_rgba(255,255,255,1),0_20px_50px_-15px_rgba(15,23,42,0.08)] p-6 sm:p-10">
+            {/* Ambient background refraction */}
+            <div className="absolute -top-16 -right-16 w-64 h-64 bg-red-400/10 rounded-full blur-[80px] pointer-events-none" />
+            
+            <div className="relative grid grid-cols-1 md:grid-cols-12 gap-6 items-center z-10">
               <div className="md:col-span-7 space-y-3.5 text-left">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 text-[#E50914] border border-red-200/80 rounded-full text-xs font-semibold">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50/80 backdrop-blur-md text-[#E50914] border border-red-200/80 rounded-full text-xs font-semibold shadow-2xs">
                   <Smartphone className="w-3.5 h-3.5" />
                   <span>Anime Trix Android App</span>
                 </div>
@@ -416,7 +419,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                         onNonAndroid: () => onOpenDownloadModal(),
                       });
                     }}
-                    className="min-h-[42px] px-6 py-2 bg-[#E50914] hover:bg-[#C80811] text-white font-bold text-xs sm:text-sm rounded-full shadow-lg shadow-red-500/25 active:scale-95 transition-all flex items-center gap-2"
+                    className="min-h-[42px] px-6 py-2 bg-gradient-to-r from-red-600 to-[#E50914] hover:brightness-105 text-white font-bold text-xs sm:text-sm rounded-full shadow-[0_8px_20px_rgba(229,9,20,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)] active:scale-95 transition-all flex items-center gap-2"
                   >
                     <Smartphone className="w-4 h-4" />
                     <span>Open App</span>
@@ -424,7 +427,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
                   <button
                     onClick={onOpenDownloadModal}
-                    className="min-h-[42px] px-5 py-2 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 font-semibold text-xs sm:text-sm rounded-full transition-all flex items-center gap-2 active:scale-95"
+                    className="min-h-[42px] px-5 py-2 bg-white/80 hover:bg-white backdrop-blur-xl border border-white/90 text-slate-800 font-semibold text-xs sm:text-sm rounded-full transition-all flex items-center gap-2 active:scale-95 shadow-[inset_0_1px_1px_rgba(255,255,255,0.9),0_2px_8px_rgba(0,0,0,0.03)]"
                   >
                     <Download className="w-4 h-4 text-[#E50914]" />
                     <span>Download APK</span>

@@ -8,6 +8,8 @@ import { ApkDownloadModal } from './components/ApkDownloadModal';
 import { HomePage } from './pages/HomePage';
 import { AnimeDetailsPage } from './pages/AnimeDetailsPage';
 import { WatchEpisodePage } from './pages/WatchEpisodePage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { TermsPage } from './pages/TermsPage';
 import {
   fetchAnimeList,
   fetchBanners,
@@ -79,7 +81,11 @@ export default function App() {
     <ToastProvider>
       <BrowserRouter>
         <ScrollToTop />
-        <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 pb-20 md:pb-0 relative overflow-x-hidden">
+        <div className="min-h-screen flex flex-col bg-[#F6F8FC] text-slate-900 pb-20 md:pb-0 relative overflow-x-hidden selection:bg-[#E50914] selection:text-white">
+          {/* iPhone Glass Ambient Chromatic Glow */}
+          <div className="pointer-events-none fixed -top-32 -left-20 w-[550px] h-[550px] bg-red-400/9 rounded-full blur-[140px] -z-10" />
+          <div className="pointer-events-none fixed top-1/3 -right-28 w-[600px] h-[600px] bg-indigo-300/10 rounded-full blur-[160px] -z-10" />
+          <div className="pointer-events-none fixed bottom-10 left-1/4 w-[500px] h-[500px] bg-amber-300/8 rounded-full blur-[150px] -z-10" />
           {/* Top Sticky Navbar */}
           <Navbar
             onOpenDownloadModal={() => setDownloadModalOpen(true)}
@@ -122,6 +128,10 @@ export default function App() {
                   />
                 }
               />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/terms-of-service" element={<TermsPage />} />
               <Route
                 path="*"
                 element={
